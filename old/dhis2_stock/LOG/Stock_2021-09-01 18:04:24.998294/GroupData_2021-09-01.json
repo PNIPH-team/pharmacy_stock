@@ -1,0 +1,1 @@
+{"schema": {"fields": [{"name": "m", "type": "string"}, {"name": "orgunit", "type": "string"}, {"name": "q", "type": "integer"}], "primaryKey": ["m", "orgunit"], "pandas_version": "0.20.0"}, "data": [{"m": "M-081-1065", "orgunit": "N0WVesLwWK2", "q": 82}, {"m": "M-101-0005", "orgunit": "N0WVesLwWK2", "q": 35}, {"m": "M-129-1005", "orgunit": "N0WVesLwWK2", "q": 92}]}
