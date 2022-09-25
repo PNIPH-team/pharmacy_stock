@@ -1,13 +1,9 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
+from config import dhis_password,dhis_url,dhis_user
 
 create_response_array=[]
-
-dhis_url="https://hmis.moh.ps/tr-dev-integration"
-dhis_user='Saleh'
-dhis_password='Test@123'
-
 
 # create event on dhis2
 def create_event(org_unit_id,today_date,xEqValue,medicine_id,):

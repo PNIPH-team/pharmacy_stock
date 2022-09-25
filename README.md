@@ -1,2 +1,3 @@
-# pharmacy_stock
- 
+<!-- # pharmacy_stock
+pharmacy stock project
+  -->
