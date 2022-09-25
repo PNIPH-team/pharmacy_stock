@@ -1,12 +1,12 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
-from config import dhis_password,dhis_url,dhis_user
-
+from config import dhis_password,dhis_url,dhis_user,today_date
+from .files import writefile
 create_response_array=[]
 
 # create event on dhis2
-def create_event(org_unit_id,today_date,xEqValue,medicine_id,):
+def create_event(org_unit_id,previouse_exchange_value,medicine_id):
         data = {
                         "status": "ACTIVE",
                         "program": "fnIEoaflGxX",
@@ -16,12 +16,12 @@ def create_event(org_unit_id,today_date,xEqValue,medicine_id,):
                         "eventDate": today_date,
                         "dataValues": [
                             {
-                                "value": xEqValue,
+                                "value": previouse_exchange_value,
                                 "dataElement": "LijzB622Z22"
                             },
                              {
                                 "dataElement": "bry41dJZ99x",
-                                "value": -xEqValue,
+                                "value": -previouse_exchange_value,
                             },
                         ],
                         "attributeCategoryOptions": medicine_id
@@ -38,12 +38,14 @@ def create_event(org_unit_id,today_date,xEqValue,medicine_id,):
         return att_req_data
 
 # update exist event on dhis2
-def update_event(event_id,event_data,):
+def update_event(event_id,event_data):
+    print(event_id)
+    print(event_data)
     headers = {'Content-Type': 'application/json'}
     try:
         update_event = requests.put(dhis_url+"/api/events/"+event_id, data =event_data,headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
-        att_req_data = json.loads(update_event.text)
-        print(att_req_data)
+        update_request_response = json.loads(update_event.text)
+        print(json.dumps(update_request_response))
         print("Update Event Stock Successfully")
     except:
         print("An exception occurred")
@@ -70,7 +72,7 @@ def get_all_time_entries():
 
     # prettify JSON
     data = json.dumps(all_time_entries, sort_keys=True, indent=4)
-    # writefile('events.json',json.loads(data))
+    writefile('events.json',json.loads(data))
     print('Update Event File')
 
 # -> Get all org
@@ -80,7 +82,7 @@ def get_org_req():
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_org_unit_req.text
 # --> Get all tei for all org
-def get_tei_org(org_unit_id,today_date):
+def get_tei_org(org_unit_id):
     get_tei = requests.get(
         dhis_url+"/api/trackedEntityInstances?ou=" +
         org_unit_id+"&fields=trackedEntityInstance&lastUpdatedEndDate="
@@ -88,7 +90,7 @@ def get_tei_org(org_unit_id,today_date):
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_tei.text
 # ---> Get all event for every tei
-def get_event(tei_id,today_date):
+def get_event(tei_id):
     get_event = requests.get(
                     dhis_url+"/api/events?trackedEntityInstance=" + tei_id + "&lastUpdatedEndDate=" +
                     today_date + "&lastUpdatedStartDate=" + today_date + "&fields=event,orgUnit,program",

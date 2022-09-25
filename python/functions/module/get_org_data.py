@@ -7,7 +7,7 @@ import time
 from ..category_options import get_code_data
 from ..api import get_org_req,get_tei_org,get_event,get_event_data
 
-def get_org_data(today_date):
+def get_org_data():
     all_array=[]
     # -> Get all org
     get_org_unit_data = json.loads(get_org_req())
@@ -15,27 +15,31 @@ def get_org_data(today_date):
     for data_from_org_unit in range(len(get_org_unit_data['organisationUnits'])):
         org_unit_id = get_org_unit_data['organisationUnits'][data_from_org_unit]['id']
         # --> Get all tei for all org
-        get_tei_data = json.loads(get_tei_org(org_unit_id,today_date))
+        get_tei_data = json.loads(get_tei_org(org_unit_id))
         # check if has data
         if('trackedEntityInstances' in get_tei_data):
             # loop on all tei data
             for number_of_tei in range(len(get_tei_data['trackedEntityInstances'])):
                 # store org_tei data to array
-                new_data_array_Prescribed = {"tei": "", "program": "","stage":"","orgunit": "", "date": "", 
-                        "m1": "", "q1": "", "m2": "","q2": "", "m3": "", "q3": "","m4": "", "q4": "", "m5": "", "q5": "",
-                        "m6": "", "q6": "", "m7": "", "q7": "", "m8": "","q8": "", "m9": "","q9": "", "m10": "","q10": "","m11": "","q11": "",
-                        "last_update":""}
-                new_data_array_Frequently = {"tei": "", "program": "","stage":"","orgunit": "", "date": "",
-                        "m1": "", "q1": "", "m2": "","q2": "", "m3": "", "q3": "","m4": "", "q4": "", "m5": "", "q5": "",
-                        "m6": "", "q6": "", "m7": "", "q7": "", "m8": "","q8": "", "m9": "","q9": "", "m10": "","q10": "",
-                        "m11": "","q11": "", "m12": "","q12": "", "m13": "","q13": "","m14": "","q14": "",
-                        "last_update":""}
+
                 tei_id = get_tei_data['trackedEntityInstances'][number_of_tei]['trackedEntityInstance']
                 # new_data_array['tei'] = tei_id
                 # # ---> Get all event for every tei
-                event_data = json.loads(get_event(tei_id,today_date))
+                event_data = json.loads(get_event(tei_id))
                 for number_of_event in range(len(event_data['events'])):
+                    new_data_array_Prescribed = {"event_id": "","tei": "", "program": "","stage":"","orgunit": "", "date": "", 
+                            "m1": "", "q1": "", "m2": "","q2": "", "m3": "", "q3": "","m4": "", "q4": "", "m5": "", "q5": "",
+                            "m6": "", "q6": "", "m7": "", "q7": "", "m8": "","q8": "", "m9": "","q9": "", "m10": "","q10": "","m11": "","q11": "",
+                            "last_update":""}
+                    new_data_array_Frequently = {"event_id": "","tei": "", "program": "","stage":"","orgunit": "", "date": "",
+                            "m1": "", "q1": "", "m2": "","q2": "", "m3": "", "q3": "","m4": "", "q4": "", "m5": "", "q5": "",
+                            "m6": "", "q6": "", "m7": "", "q7": "", "m8": "","q8": "", "m9": "","q9": "", "m10": "","q10": "",
+                            "m11": "","q11": "", "m12": "","q12": "", "m13": "","q13": "","m14": "","q14": "",
+                            "last_update":""}
                     event_id = event_data['events'][number_of_event]['event']
+                    # print(event_id)
+                    # print(new_data_array_Frequently)
+                    # print(new_data_array_Prescribed)
                     orgunit = event_data['events'][number_of_event]['orgUnit']
                     # ----> Get all data for every event
                     get_event_id_data = json.loads(get_event_data(event_id))
@@ -43,6 +47,7 @@ def get_org_data(today_date):
                         program_stage_type=get_event_id_data['programStage']
                         program_id=event_data['events'][number_of_event]['program']
                         if(program_stage_type=="JV6n7FhC7xp"):
+                            new_data_array_Prescribed['event_id']=event_id
                             new_data_array_Prescribed['tei']=tei_id
                             new_data_array_Prescribed['program']=program_id
                             new_data_array_Prescribed['stage']=program_stage_type
@@ -136,6 +141,7 @@ def get_org_data(today_date):
                             all_array.append(new_data_array_Prescribed)
 
                         if(program_stage_type=="tJQ1UCpkCy2"):
+                            new_data_array_Frequently['event_id']=event_id
                             new_data_array_Frequently['tei']=tei_id
                             new_data_array_Frequently['program']=program_id
                             new_data_array_Frequently['stage']=program_stage_type
@@ -245,7 +251,9 @@ def get_org_data(today_date):
                              #TODO::insert To Database
                             # print(new_data_array_Frequently)
                             all_array.append(new_data_array_Frequently)
-    #return all event data                    
+    #return all event data   
+    #                  
+    # print(all_array)
     return all_array                   
 
 

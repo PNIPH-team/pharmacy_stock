@@ -1,8 +1,7 @@
 import json
-
-
-
-
+from datetime import datetime
+from ..api import create_event,update_event
+from config import today
 def updateData(stud_json):
     #Load last updated list from database
     databaseList=json.loads(stud_json)
@@ -12,10 +11,10 @@ def updateData(stud_json):
         notActiveEventArray=[]
         forNegArray=[]
         #define variables from database data
-        orgUnitId=databaseList[sumList]['orgunit']#! Org
-        midicaneId=databaseList[sumList]['m']#! M
+        org_unit_id=databaseList[sumList]['orgunit']#! Org
+        medicine_id=databaseList[sumList]['m']#! M
         quantityDispensed=databaseList[sumList]['q'] #! Q
-        print("midicaneId:",midicaneId)
+        print("medicine_id:",medicine_id)
         print("quantityDispensed:",quantityDispensed)
         completed=0
         active=0
@@ -24,7 +23,7 @@ def updateData(stud_json):
             # print(json.dumps(eventFile[0]['events']))
             for numberOfEvent in range(len(eventFile[0]['events'])):
                 eventArray=eventFile[0]['events'][numberOfEvent]
-                if(eventArray['attributeCategoryOptions']==midicaneId):
+                if(eventArray['attributeCategoryOptions']==medicine_id):
                     if(eventArray['status']=='ACTIVE'):
                         for numberOfDataValue in range(len(eventArray['dataValues'])):
                             if(eventArray['dataValues'][numberOfDataValue]['dataElement']=='LijzB622Z22'):
@@ -35,13 +34,13 @@ def updateData(stud_json):
                                     completed= completed+int(eventArray['dataValues'][numberOfDataValue]['value'])
             print("completed:", completed)
             print("active:", active)
-            xEqValue=int(quantityDispensed)-(completed+active)
-            print("total:", xEqValue)
+            previouse_exchange_value=int(quantityDispensed)-(completed+active)
+            print("total:", previouse_exchange_value)
 
-            if(xEqValue>0 or xEqValue<0):
+            if(previouse_exchange_value>0 or previouse_exchange_value<0):
                 for numberOfEvent in range(len(eventFile[0]['events'])):
                     eventArray=eventFile[0]['events'][numberOfEvent]
-                    if(eventArray['attributeCategoryOptions']==midicaneId):
+                    if(eventArray['attributeCategoryOptions']==medicine_id):
                         active=False
                         notExpired=False
                         totalDisposed=0
@@ -52,8 +51,8 @@ def updateData(stud_json):
                             active=True
                         for numberOfDataValue in range(len(eventArray['dataValues'])):
                             if(eventArray['dataValues'][numberOfDataValue]['dataElement']=='xW95VLnIqyP'):
-                                valueDate = datetime. strptime(eventArray['dataValues'][numberOfDataValue]['value'], '%Y-%m-%d').date()
-                                todayDateValue =  datetime. strptime(today.strftime( '%Y-%m-%d'), '%Y-%m-%d').date()
+                                valueDate = datetime.strptime(eventArray['dataValues'][numberOfDataValue]['value'], '%Y-%m-%d').date()
+                                todayDateValue =  datetime.strptime(today.strftime( '%Y-%m-%d'), '%Y-%m-%d').date()
                                 if(todayDateValue<=valueDate):
                                     notExpired=True
                                 else:
@@ -68,28 +67,28 @@ def updateData(stud_json):
                                 eventTotalValue=int(eventArray['dataValues'][numberOfDataValue]['value'])
                         if(active and notExpired):
                             # print("in")
-                            activeEventArray.append({"event":eventArray['event'],"date":datetime. strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"value":eventValue,"total":totalValue,"query":eventArray})
-                            forNegArray.append({"event":eventArray['event'],"date":datetime. strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock":eventTotalValue,"value":eventValue,"total":totalValue,"query":eventArray})
+                            activeEventArray.append({"event":eventArray['event'],"date":datetime.strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"value":eventValue,"total":totalValue,"query":eventArray})
+                            forNegArray.append({"event":eventArray['event'],"date":datetime.strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock":eventTotalValue,"value":eventValue,"total":totalValue,"query":eventArray})
                         else:
                             # print("out")
-                            datexxx=datetime. strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date() if eventArray['eventDate']!=None else ''
-                            notActiveEventArray.append({"event":datexxx ,"date":datetime. strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock":eventTotalValue,"value":eventValue,"total":totalValue,"query":eventArray})
-                            forNegArray.append({"event":eventArray['event'],"date":datetime. strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock":eventTotalValue,"value":eventValue,"total":totalValue,"query":eventArray})
+                            datexxx=datetime.strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date() if eventArray['eventDate']!=None else ''
+                            notActiveEventArray.append({"event":datexxx ,"date":datetime.strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock":eventTotalValue,"value":eventValue,"total":totalValue,"query":eventArray})
+                            forNegArray.append({"event":eventArray['event'],"date":datetime.strptime(eventArray['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock":eventTotalValue,"value":eventValue,"total":totalValue,"query":eventArray})
             else:
                 print("Equal Zero")
 
 
     #Start Update on DHIS2
     #?? No Edit Senario
-            if(xEqValue==0):
+            if(previouse_exchange_value==0):
                 print("No Edit")
     #?? Positive Senario
-            elif( xEqValue>0):
+            elif( previouse_exchange_value>0):
                 print("Edit Positive")
                 #! Create New Event
                 if(len(activeEventArray)==0):
                     print('=0')
-                    createEventFunction(orgUnitId,xEqValue,midicaneId)
+                    create_event(org_unit_id,previouse_exchange_value,medicine_id)
                 #! Update Exsisted Event
                 elif(len(activeEventArray)>0):
                     positiveTotal=False
@@ -105,11 +104,12 @@ def updateData(stud_json):
                     eventSelectID=''
                     #loop on all event to check if we have good total or >0
                     for EventJsonArray in range(len(sorted_date_array)):
-                        if  sorted_date_array[EventJsonArray]['total'] >= swapArray:
-                            if(sorted_date_array[EventJsonArray]['total']>0):
-                                positiveTotal=True
-                            swapArray= sorted_date_array[EventJsonArray]['total']
-                            eventSelectID=sorted_date_array[EventJsonArray]['event']
+                        if print(sorted_date_array[EventJsonArray]['total']) != None:
+                            if sorted_date_array[EventJsonArray]['total'] >= swapArray:
+                                if(sorted_date_array[EventJsonArray]['total']>0):
+                                    positiveTotal=True
+                                swapArray= sorted_date_array[EventJsonArray]['total']
+                                eventSelectID=sorted_date_array[EventJsonArray]['event']
                     if(positiveTotal):
                             selectedData=list(filter(lambda x:x["event"]==eventSelectID,sorted_date_array))
                             updateEventId=selectedData[0]['event']
@@ -123,15 +123,15 @@ def updateData(stud_json):
                                         queryTotal=int(selectedData[0]['query']['dataValues'][numberOfDataElement]['value'])
         
                             #Calculate new values
-                            if(abs(xEqValue)>queryTotal):
-                                xEqValue=xEqValue-queryTotal
-                                newEventValue= queryTotal+xEqValue
-                                print("xEqValue",xEqValue)
+                            if(abs(previouse_exchange_value)>queryTotal):
+                                previouse_exchange_value=previouse_exchange_value-queryTotal
+                                newEventValue= queryTotal+previouse_exchange_value
+                                print("previouse_exchange_value",previouse_exchange_value)
                                 print("newEventValue",newEventValue)
                             else:
-                                newEventValue=queryValue+xEqValue
+                                newEventValue=queryValue+previouse_exchange_value
                                 queryTotal=queryStock-newEventValue
-                                xEqValue=0
+                                previouse_exchange_value=0
 
 
                             for numberOfDataElement in range(len(selectedData[0]['query']['dataValues'])):
@@ -149,15 +149,15 @@ def updateData(stud_json):
                             del eventWithNewData['eventDate']
                             del eventWithNewData['dueDate']
                             toJsonFormat=json.dumps(eventWithNewData)
-                            updateEventFunction(updateEventId,toJsonFormat)
+                            update_event(updateEventId,toJsonFormat)
                     else:
                         # No Array have Total above 0 >>0 :: select fist one and add the value on it
                         selectedData=sorted_date_array[0]
                         updateEventId=sorted_date_array[0]['event']
                         for numberOfDataElement in range(len(sorted_date_array[0]['query']['dataValues'])):
                             if(sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['dataElement']=='LijzB622Z22'):
-                                newEventValue=int(sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['value'])+xEqValue
-                                sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['value']= int(sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['value'])+xEqValue
+                                newEventValue=int(sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['value'])+previouse_exchange_value
+                                sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['value']= int(sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['value'])+previouse_exchange_value
                             if(sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['dataElement']=='LCWyFX0sjqM'):
                                 quantityStockSelected=sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['value']
                             if(sorted_date_array[0]['query']['dataValues'][numberOfDataElement]['dataElement']=='bry41dJZ99x'):
@@ -171,44 +171,44 @@ def updateData(stud_json):
                         del eventWithNewData['eventDate']
                         del eventWithNewData['dueDate']
                         toJsonFormat=json.dumps(eventWithNewData)
-                        updateEventFunction(updateEventId,toJsonFormat)
-                        # xEqValue=0
-                    if(xEqValue==0):
+                        update_event(updateEventId,toJsonFormat)
+                        # previouse_exchange_value=0
+                    if(previouse_exchange_value==0):
                         print('break')
-                        break
+                        continue
                     else:
                         if(len(activeEventArray)>0):
-                            # xEqValue=newEventValue
+                            # previouse_exchange_value=newEventValue
                             activeEventArray.pop(0)
-                            if(len(activeEventArray)==0 and xEqValue !=0):
-                                createEventFunction(orgUnitId,xEqValue,midicaneId)
-                                xEqValue=0
+                            if(len(activeEventArray)==0 and previouse_exchange_value !=0):
+                                create_event(org_unit_id,previouse_exchange_value,medicine_id)
+                                previouse_exchange_value=0
     #?? Negative Senario
-            elif(xEqValue<0):
+            elif(previouse_exchange_value<0):
                 # print(forNegArray)
                 print("Edit Negative")
                 #! Create New Event
                 if(len(forNegArray)==0):
                     print('=0')
-                    createEventFunction(orgUnitId,xEqValue,midicaneId)
+                    create_event(org_unit_id,previouse_exchange_value,medicine_id)
                 elif(len(forNegArray)>=1):
                     print('>')
                     sorted_date_array = sorted(forNegArray, key=lambda x: x['date'],reverse=True)
                     # print("sorted_date_array",sorted_date_array)
                     for EventJsonArray in range(len(sorted_date_array)):
-                        # print("xEqValue", xEqValue)
+                        # print("previouse_exchange_value", previouse_exchange_value)
                         if(sorted_date_array[EventJsonArray]['total']==0 and sorted_date_array[EventJsonArray]['value']==0):
                             print('break == 0')
                             # sorted_date_array.pop(0)
                             continue
                         else:
                             newEventTotal=0
-                            if(abs(xEqValue)>sorted_date_array[EventJsonArray]['value']):
+                            if(abs(previouse_exchange_value)>sorted_date_array[EventJsonArray]['value']):
                                 newEventValue=0
-                                xEqValue=sorted_date_array[EventJsonArray]['value']+xEqValue
+                                previouse_exchange_value=sorted_date_array[EventJsonArray]['value']+previouse_exchange_value
                             else:
-                                newEventValue=sorted_date_array[EventJsonArray]['value']+xEqValue
-                                xEqValue=0
+                                newEventValue=sorted_date_array[EventJsonArray]['value']+previouse_exchange_value
+                                previouse_exchange_value=0
                             if(sorted_date_array[EventJsonArray]['total']==None):
                                 sorted_date_array[EventJsonArray]['total']=0
                             if(sorted_date_array[EventJsonArray]['stock']==None):
@@ -234,13 +234,13 @@ def updateData(stud_json):
                             del eventWithNewData['eventDate']
                             del eventWithNewData['dueDate']
                             toJsonFormat=json.dumps(eventWithNewData)
-                            updateEventFunction(updateEventId,toJsonFormat)
-                            if(xEqValue==0 or xEqValue>0):
+                            update_event(updateEventId,toJsonFormat)
+                            if(previouse_exchange_value==0 or previouse_exchange_value>0):
                                 print('break')
-                                break
+                                continue
                             else:
                                 if(len(sorted_date_array)<0):
                                     sorted_date_array.pop(0)
-                                elif(len(sorted_date_array)==0 and xEqValue < 0):
-                                    createEventFunction(orgUnitId,xEqValue,midicaneId)
-                                    xEqValue=0
+                                elif(len(sorted_date_array)==0 and previouse_exchange_value < 0):
+                                    create_event(org_unit_id,previouse_exchange_value,medicine_id)
+                                    previouse_exchange_value=0
