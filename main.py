@@ -9,6 +9,8 @@ from functions.module.get_org_data import get_org_data
 from functions.module.store_data import store_data
 from functions.module.update import updateData
 from functions.api import get_all_time_entries
+
+
 def main():
     #connect with local database Mysql with credentials 
     connection,cursor = connect_database()
