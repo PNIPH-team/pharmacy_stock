@@ -72,7 +72,7 @@ def get_all_time_entries():
 
     # prettify JSON
     data = json.dumps(all_time_entries, sort_keys=True, indent=4)
-    writefile('events.json',json.loads(data))
+    writefile('data/events.json',json.loads(data))
     print('Update Event File')
 
 # -> Get all org

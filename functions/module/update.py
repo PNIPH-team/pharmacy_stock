@@ -18,7 +18,7 @@ def updateData(stud_json):
         print("quantityDispensed:",quantityDispensed)
         completed=0
         active=0
-        with open('events.json') as event:
+        with open('data/events.json') as event:
             eventFile = json.load(event)
             # print(json.dumps(eventFile[0]['events']))
             for numberOfEvent in range(len(eventFile[0]['events'])):
