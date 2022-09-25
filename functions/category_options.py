@@ -1,3 +1,4 @@
+# Define all function related with category options
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -5,11 +6,13 @@ from .files import writefile
 from config import dhis_url,dhis_user,dhis_password
 
 categoryOptionsList = []
+
 # this function to loop on all args & store data to list
 def store_category(args):
     for category_data in args:
         categoryOptionsList.append(category_data)
 
+# this fucntion to get all gategory options from dhis2 and store it on category file to use it later
 def category_options():
     # request to get category options data
     category_options_req = requests.get(

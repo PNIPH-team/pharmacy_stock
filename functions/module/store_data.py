@@ -1,7 +1,8 @@
+# Define store and update data from event to local database
 import json
 from ..data import check,insert_new
 
-
+# This function get all new data and insert or update local database with return new object of grouping data by org and medication
 def store_data(newest_data,database_connection,cursor):
         the_big_data_newest_list = []
         for numberOfNewData in range(len(newest_data)):

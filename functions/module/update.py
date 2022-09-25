@@ -1,7 +1,10 @@
+# Define all type of action to reverse it to dhis2 system (capture)
 import json
 from datetime import datetime
 from ..api import create_event,update_event
 from config import today
+
+# This function work to check every new event with existing event on capture program
 def updateData(stud_json):
     #Load last updated list from database
     databaseList=json.loads(stud_json)

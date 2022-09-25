@@ -1,3 +1,4 @@
+# Define all API request to connect dhis2 with python for create, update and get data
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -5,7 +6,7 @@ from config import dhis_password,dhis_url,dhis_user,today_date
 from .files import writefile
 create_response_array=[]
 
-# create event on dhis2
+# Create event on dhis2
 def create_event(org_unit_id,previouse_exchange_value,medicine_id):
         data = {
                         "status": "ACTIVE",
@@ -37,7 +38,7 @@ def create_event(org_unit_id,previouse_exchange_value,medicine_id):
         # print(att_req_data)
         return att_req_data
 
-# update exist event on dhis2
+# Update exist event on dhis2
 def update_event(event_id,event_data):
     print(event_id)
     print(event_data)
@@ -50,7 +51,7 @@ def update_event(event_id,event_data):
     except:
         print("An exception occurred")
 
-# get all dhis2 event & store it on json
+# Get all dhis2 event & store it on json
 def get_all_time_entries():
     url_address = dhis_url+"/api/events?program=fnIEoaflGxX"  
     headers = {'Content-Type': 'application/json'}
@@ -73,15 +74,15 @@ def get_all_time_entries():
     # prettify JSON
     data = json.dumps(all_time_entries, sort_keys=True, indent=4)
     writefile('data/events.json',json.loads(data))
-    print('Update Event File')
 
-# -> Get all org
+# Get all org
 def get_org_req():
     get_org_unit_req = requests.get(
         dhis_url+"/api/programs/vj5cpA2OOfZ?fields=organisationUnits",
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_org_unit_req.text
-# --> Get all tei for all org
+
+# Get all tei for all org
 def get_tei_org(org_unit_id):
     get_tei = requests.get(
         dhis_url+"/api/trackedEntityInstances?ou=" +
@@ -89,14 +90,16 @@ def get_tei_org(org_unit_id):
         + today_date + "&lastUpdatedStartDate=" + today_date,
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_tei.text
-# ---> Get all event for every tei
+
+# Get all event for every tei
 def get_event(tei_id):
     get_event = requests.get(
                     dhis_url+"/api/events?trackedEntityInstance=" + tei_id + "&lastUpdatedEndDate=" +
                     today_date + "&lastUpdatedStartDate=" + today_date + "&fields=event,orgUnit,program",
                     auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_event.text
-# ----> Get all data for every event
+
+# Get all data for every event
 def get_event_data(event_id):
     get_event_id = requests.get(
                         dhis_url+"/api/events/" + event_id, auth=HTTPBasicAuth(dhis_user, dhis_password))

@@ -1,3 +1,4 @@
+# Define get organisation data to retrieve all event from all organisation by tei
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -7,55 +8,56 @@ import time
 from ..category_options import get_code_data
 from ..api import get_org_req,get_tei_org,get_event,get_event_data
 
+# This function make multi loop to get all event data from all organisation for every tei and return array of event objects
 def get_org_data():
     all_array=[]
-    # -> Get all org
+    # Get all org
     get_org_unit_data = json.loads(get_org_req())
     # loop on all org ids
     for data_from_org_unit in range(len(get_org_unit_data['organisationUnits'])):
         org_unit_id = get_org_unit_data['organisationUnits'][data_from_org_unit]['id']
-        # --> Get all tei for all org
+        # Get all tei for all org
         get_tei_data = json.loads(get_tei_org(org_unit_id))
         # check if has data
         if('trackedEntityInstances' in get_tei_data):
             # loop on all tei data
             for number_of_tei in range(len(get_tei_data['trackedEntityInstances'])):
                 # store org_tei data to array
-
                 tei_id = get_tei_data['trackedEntityInstances'][number_of_tei]['trackedEntityInstance']
-                # new_data_array['tei'] = tei_id
-                # # ---> Get all event for every tei
+                # Get all event for every tei
                 event_data = json.loads(get_event(tei_id))
                 for number_of_event in range(len(event_data['events'])):
+                    # create prescribed empty template object
                     new_data_array_Prescribed = {"event_id": "","tei": "", "program": "","stage":"","orgunit": "", "date": "", 
                             "m1": "", "q1": "", "m2": "","q2": "", "m3": "", "q3": "","m4": "", "q4": "", "m5": "", "q5": "",
                             "m6": "", "q6": "", "m7": "", "q7": "", "m8": "","q8": "", "m9": "","q9": "", "m10": "","q10": "","m11": "","q11": "",
                             "last_update":""}
+                    # create frequently empty template object
                     new_data_array_Frequently = {"event_id": "","tei": "", "program": "","stage":"","orgunit": "", "date": "",
                             "m1": "", "q1": "", "m2": "","q2": "", "m3": "", "q3": "","m4": "", "q4": "", "m5": "", "q5": "",
                             "m6": "", "q6": "", "m7": "", "q7": "", "m8": "","q8": "", "m9": "","q9": "", "m10": "","q10": "",
                             "m11": "","q11": "", "m12": "","q12": "", "m13": "","q13": "","m14": "","q14": "",
                             "last_update":""}
+                    # define event id and organisation id variable
                     event_id = event_data['events'][number_of_event]['event']
-                    # print(event_id)
-                    # print(new_data_array_Frequently)
-                    # print(new_data_array_Prescribed)
-                    orgunit = event_data['events'][number_of_event]['orgUnit']
-                    # ----> Get all data for every event
+                    organisation_id = event_data['events'][number_of_event]['orgUnit']
+                    # Get all data for every event
                     get_event_id_data = json.loads(get_event_data(event_id))
                     if('dataValues' in json.dumps(get_event_id_data)):
                         program_stage_type=get_event_id_data['programStage']
                         program_id=event_data['events'][number_of_event]['program']
+                        # Check if stage type prescribed
                         if(program_stage_type=="JV6n7FhC7xp"):
                             new_data_array_Prescribed['event_id']=event_id
                             new_data_array_Prescribed['tei']=tei_id
                             new_data_array_Prescribed['program']=program_id
                             new_data_array_Prescribed['stage']=program_stage_type
-                            new_data_array_Prescribed['orgunit']=orgunit
+                            new_data_array_Prescribed['orgunit']=organisation_id
                             new_data_array_Prescribed['date'] = str(datetime.strptime(get_event_id_data['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
                             new_data_array_Prescribed['last_update'] = str(datetime.strptime(get_event_id_data['dueDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
                             for numberOfDataValue in range(len(get_event_id_data['dataValues'])):
                                 event_id_data = get_event_id_data['dataValues'][numberOfDataValue]['dataElement']
+                                # Check Prescribed Medication
                                 if event_id_data == "aM2Vn0UUPJB":
                                     event_value = get_event_id_data['dataValues'][numberOfDataValue]['value']
                                     new_data_array_Prescribed['m1'] = get_code_data(event_value)
@@ -89,7 +91,7 @@ def get_org_data():
                                 if event_id_data == "nTd67mb0PJe":
                                     event_value = get_event_id_data['dataValues'][numberOfDataValue]['value']
                                     new_data_array_Prescribed['m11'] = get_code_data(event_value)
-                                # Check Quantity
+                                # Check Prescribed Quantity
                                 if event_id_data == "HS5mppnnRUD":
                                     event_value = int(
                                         get_event_id_data['dataValues'][numberOfDataValue]['value'])
@@ -135,21 +137,22 @@ def get_org_data():
                                         get_event_id_data['dataValues'][numberOfDataValue]['value'])
                                     new_data_array_Prescribed['q11'] = event_value
 
-                            #TODO::insert To Database
-                            # print(new_data_array_Prescribed['tei'] == "")
-                            # print(new_data_array_Prescribed)
+                            # Add prescribed array to all_array variable
                             all_array.append(new_data_array_Prescribed)
-
+                        
+                        # Check if stage type frequently
                         if(program_stage_type=="tJQ1UCpkCy2"):
+                            # store all event data on frequently object
                             new_data_array_Frequently['event_id']=event_id
                             new_data_array_Frequently['tei']=tei_id
                             new_data_array_Frequently['program']=program_id
                             new_data_array_Frequently['stage']=program_stage_type
-                            new_data_array_Frequently['orgunit']=orgunit
+                            new_data_array_Frequently['orgunit']=organisation_id
                             new_data_array_Frequently['date'] = str(datetime.strptime(get_event_id_data['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
                             new_data_array_Frequently['last_update'] = str(datetime.strptime(get_event_id_data['dueDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
                             for numberOfDataValue in range(len(get_event_id_data['dataValues'])):
                                 event_id_data = get_event_id_data['dataValues'][numberOfDataValue]['dataElement']                                
+                                # Check Frequently Medication
                                 if event_id_data == "g3jYfDWMlju":
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m1'] = get_code_data("M-301-1001")
@@ -192,6 +195,7 @@ def get_org_data():
                                 if event_id_data == "Oh5NachZvua":
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m14'] =  get_code_data("M-181-1018")
+                                # Check Frequently Quantity
                                 if event_id_data == "gTreHa9FsAJ":
                                     event_value = int(
                                         get_event_id_data['dataValues'][numberOfDataValue]['value'])
@@ -248,12 +252,9 @@ def get_org_data():
                                     event_value = int(
                                         get_event_id_data['dataValues'][numberOfDataValue]['value'])
                                     new_data_array_Frequently['q14'] = event_value 
-                             #TODO::insert To Database
-                            # print(new_data_array_Frequently)
+                            # Add frequently array to all_array variable
                             all_array.append(new_data_array_Frequently)
-    #return all event data   
-    #                  
-    # print(all_array)
+    # return all event objects
     return all_array                   
 
 
