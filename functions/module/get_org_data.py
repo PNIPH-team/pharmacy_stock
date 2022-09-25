@@ -1,10 +1,8 @@
 # Define get organisation data to retrieve all event from all organisation by tei
-import requests
 from requests.auth import HTTPBasicAuth
 import json
 from datetime import date
 from datetime import datetime
-import time
 from ..category_options import get_code_data
 from ..api import get_org_req,get_tei_org,get_event,get_event_data
 
