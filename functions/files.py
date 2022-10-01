@@ -12,6 +12,10 @@ def createFiles(path):
 # write data on file with file path and data parameters
 def writefile(file_name, data):
     json_data = json.dumps(data, ensure_ascii=False)
+    if (os.path.exists(file_name)):
+        os.remove(file_name)
+    else:
+        print(file_name)
     file = open(file_name, "w")
     with open(file.name, "w") as files:
         files.write(json_data)
