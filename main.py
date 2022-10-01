@@ -32,7 +32,7 @@ def main():
     #     # print empty if no new event found
     #     print("Empty Data *No New Data Found")
     get_all_time_entries()
-    updateData(json.dumps([{"orgunit": "ORsMYiLzFC9", "m": "n34JlJWVzHx", "q": "550"},{"orgunit": "k3jhRofJS7G", "m": "n34JlJWVzHx", "q": "500"}]))
+    updateData(json.dumps([{"orgunit": "ORsMYiLzFC9", "m": "n34JlJWVzHx", "q": "20"},{"orgunit": "k3jhRofJS7G", "m": "n34JlJWVzHx", "q": "500"}]))
 
 
 # run main function

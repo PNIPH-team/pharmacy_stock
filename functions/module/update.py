@@ -125,6 +125,7 @@ def updateData(all_event_data_groupby_json):
             print("Start Step 3 ..")
             #? Start Update on DHIS2
             sorted_date_array = sorted(array_for_active_events, key=lambda x: x['date'])
+            sorted_date_array_negative = sorted(array_for_negative_values, key=lambda x: x['date'],reverse=True)
             while quantity_before_exchange!=0:
                 print("val"+ str(quantity_before_exchange))
                 
@@ -137,8 +138,7 @@ def updateData(all_event_data_groupby_json):
                     print("Edit Positive")
                     #? Create New Event
                     if(len(sorted_date_array)==0 and quantity_before_exchange !=0 ):
-                        print('number of active event is zero')
-                        print(quantity_before_exchange)
+                        print('Number of active event is zero')
                         create_event(org_unit_id,quantity_before_exchange,medicine_id)
                         quantity_before_exchange=0
                         continue
@@ -147,7 +147,7 @@ def updateData(all_event_data_groupby_json):
                     elif(len(sorted_date_array)>0):
                         print('>')
                         #sort array by date from old to new
-                        for EventJsonArray in range(len(sorted_date_array)):
+                        for sorted_event_number in range(len(sorted_date_array)):
                             # set variables
                             event_id=sorted_date_array[0]['event']
                             organisation_id=sorted_date_array[0]['query']['orgUnit']
@@ -180,7 +180,6 @@ def updateData(all_event_data_groupby_json):
                                     continue
                             else:
                             # when event total is enough or minus
-                                print("print else")
                                 new_stock_quantity_dispensed=(stock_quantity_dispensed+quantity_before_exchange) # 72+28=100
                                 total_quantity=quantity_stock-new_stock_quantity_dispensed
                                 new_update_event(medication_id,total_quantity,quantity_stock,new_stock_quantity_dispensed,event_id,organisation_id,program_id,"ACTIVE")
@@ -192,67 +191,76 @@ def updateData(all_event_data_groupby_json):
                 elif(quantity_before_exchange<0):
                     # print(forNegArray)
                     print("Edit Negative")
-                    print(array_for_negative_values)
-                    #! Create New Event
-                    if(len(array_for_negative_values)==0):
-                        print('number of negative event is zero')
+                    #? Create New Event
+                    if(len(sorted_date_array_negative)==0 and quantity_before_exchange !=0 ):
+                        print('Number of negative event is zero')
                         # create_event(org_unit_id,quantity_before_exchange,medicine_id)
                         quantity_before_exchange=0
                         continue
                     
                     #! Update Exist Event
-                    elif(len(array_for_negative_values)>=1):
-                        print('>')
-                        sorted_date_array = sorted(array_for_negative_values, key=lambda x: x['date'],reverse=True)
-                        # print("sorted_date_array",sorted_date_array)
-                        for EventJsonArray in range(len(sorted_date_array)):
-                            # print("quantity_before_exchange", quantity_before_exchange)
-                            if(sorted_date_array[EventJsonArray]['stock_total']==0 and sorted_date_array[EventJsonArray]['stock_quantity_dispensed']==0):
-                                print('break == 0')
-                                # sorted_date_array.pop(0)
-                                continue
-                            else:
-                                newEventTotal=0
-                                if(abs(quantity_before_exchange)>sorted_date_array[EventJsonArray]['stock_quantity_dispensed']):
-                                    newEventValue=0
-                                    quantity_before_exchange=sorted_date_array[EventJsonArray]['stock_quantity_dispensed']+quantity_before_exchange
+                    elif(len(sorted_date_array_negative)>0):
+                        print('<')
+                        
+                        #sort array by date from old to new
+                        for negative_sorted_event_number in range(len(sorted_date_array_negative)):
+                            # set variables
+                            event_id=sorted_date_array_negative[0]['event']
+                            organisation_id=sorted_date_array_negative[0]['query']['orgUnit']
+                            program_id=sorted_date_array_negative[0]['query']['program']
+                            quantity_stock=sorted_date_array_negative[0]['quantity_stock']
+                            stock_quantity_dispensed=sorted_date_array_negative[0]['stock_quantity_dispensed']
+                            medication_id=sorted_date_array_negative[0]['query']['attributeCategoryOptions']
+                            stock_total=sorted_date_array_negative[0]['stock_total']
+                            # calculate quantity 
+                            print("quantity_before_exchange+stock_total")
+                            print(quantity_before_exchange+stock_total)
+                            print(stock_quantity_dispensed)
+                            print(quantity_before_exchange)
+                            calculation_value=quantity_before_exchange+stock_quantity_dispensed # -250+50 =-200 + 200 // -180 + 200= 20
+                            if stock_quantity_dispensed is None:
+                                stock_quantity_dispensed=0
+                            if stock_total is None:
+                                stock_total=0
+                            if quantity_stock is None:
+                                quantity_stock=0
+
+
+                            print("quantity_stock")
+                            print(quantity_stock)
+                            print("stock_quantity_dispensed")
+                            print(stock_quantity_dispensed)
+                            print("stock_total")
+                            print(stock_total)
+                            print("calculation_value")
+                            print(calculation_value)
+                            print("stock_quantity_dispensed")
+                            print(stock_quantity_dispensed)
+                            print("stock_total")
+                            print(stock_total)
+                            print("quantity_stock")
+                            print(quantity_stock)
+                            # when event not enough
+                            if(calculation_value<0):
+                                # its just means this event not en.  
+                                # set new stock dispensed value equal old dispensed plus total of stock
+                                new_stock_quantity_dispensed=0 # 60-40 # 60
+                                # set new total of quentity equal old quantity minus new stock dispensed
+                                total_quantity=quantity_stock # 100-100
+                                new_update_event(medication_id,total_quantity,quantity_stock,new_stock_quantity_dispensed,event_id,organisation_id,program_id,"ACTIVE")
+                                quantity_before_exchange=calculation_value #28
+                                sorted_date_array_negative.pop(0)
+                                if(len(sorted_date_array_negative)==0):
+                                    break
                                 else:
-                                    newEventValue=sorted_date_array[EventJsonArray]['stock_quantity_dispensed']+quantity_before_exchange
-                                    quantity_before_exchange=0
-                                if(sorted_date_array[EventJsonArray]['stock_total']==None):
-                                    sorted_date_array[EventJsonArray]['stock_total']=0
-                                if(sorted_date_array[EventJsonArray]['stock_quantity_dispensed']==None):
-                                    sorted_date_array[EventJsonArray]['stock_quantity_dispensed']=0
-                                updateEventId=sorted_date_array[EventJsonArray]['event']
-                                for numberOfDataElement in range(len(sorted_date_array[EventJsonArray]['query']['dataValues'])):
-                                    if(sorted_date_array[EventJsonArray]['query']['dataValues'][numberOfDataElement]['dataElement']=='LijzB622Z22'):
-                                        sorted_date_array[EventJsonArray]['query']['dataValues'][numberOfDataElement]['value']=newEventValue
-                                    if(sorted_date_array[EventJsonArray]['query']['dataValues'][numberOfDataElement]['dataElement']=='LCWyFX0sjqM'):
-                                        newEventTotal=sorted_date_array[EventJsonArray]['query']['dataValues'][numberOfDataElement]['value']
-                                    if(sorted_date_array[EventJsonArray]['query']['dataValues'][numberOfDataElement]['dataElement']=='bry41dJZ99x'):
-                                        sorted_date_array[EventJsonArray]['query']['dataValues'][numberOfDataElement]['value']=newEventTotal-newEventValue
-                                #store event it
-                                sorted_date_array[EventJsonArray]['query']['status']='ACTIVE'
-                                #convert to json
-                                toJsonFromEventData=json.dumps(sorted_date_array[EventJsonArray]['query'])
-                                eventWithNewData=json.loads(toJsonFromEventData)
-                                #TODO!! Check before delete
-                                del eventWithNewData["href"]
-                                del eventWithNewData['deleted']
-                                del eventWithNewData['notes']
-                                del eventWithNewData['lastUpdated']
-                                del eventWithNewData['eventDate']
-                                del eventWithNewData['dueDate']
-                                toJsonFormat=json.dumps(eventWithNewData)
-                                update_event(updateEventId,toJsonFormat)
-                                if(quantity_before_exchange==0 or quantity_before_exchange>0):
-                                    print('break')
                                     continue
-                                else:
-                                    if(len(sorted_date_array)<0):
-                                        sorted_date_array.pop(0)
-                                    elif(len(sorted_date_array)==0 and quantity_before_exchange < 0):
-                                        create_event(org_unit_id,quantity_before_exchange,medicine_id)
-                                        quantity_before_exchange=0
+                            else:
+                                print("else if")
+                            # when event total is enough or minus
+                                new_stock_quantity_dispensed=(stock_quantity_dispensed+quantity_before_exchange) # 80 +-80 = 0
+                                total_quantity=quantity_stock-new_stock_quantity_dispensed # 0-80=-80
+                                new_update_event(medication_id,total_quantity,quantity_stock,new_stock_quantity_dispensed,event_id,organisation_id,program_id,"ACTIVE")
+                                quantity_before_exchange=0
+                                break
 
                 ###! End STEP3
