@@ -4,25 +4,26 @@ def update_scenario(quantity_before_exchange,array_for_active_events,array_for_n
     sorted_date_array = sorted(array_for_active_events, key=lambda x: x['date'])
     sorted_date_array_negative = sorted(array_for_negative_values, key=lambda x: x['date'],reverse=True)
     while quantity_before_exchange!=0:
-        print("val"+ str(quantity_before_exchange))
+        # print("val"+ str(quantity_before_exchange))
         
     # No Edit Scenario
         if(quantity_before_exchange==0):
+            # print(quantity_before_exchange)
             pass
 
     # Positive Scenario
         elif(quantity_before_exchange>0):
-            print("Edit Positive")
+            #* print("Edit Positive")
             #? Create New Event
             if(len(sorted_date_array)==0 and quantity_before_exchange !=0 ):
-                print('Number of active event is zero')
+                # print('Number of active event is zero')
                 create_event(org_unit_id,quantity_before_exchange,medicine_id)
                 quantity_before_exchange=0
                 continue
 
             #? Update Existed Event
             elif(len(sorted_date_array)>0):
-                print('>')
+                # print('>')
                 #sort array by date from old to new
                 for sorted_event_number in range(len(sorted_date_array)):
                     # set variables

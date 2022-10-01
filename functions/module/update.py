@@ -8,10 +8,7 @@ def updateData(all_event_data_groupby_json):
     #Load last updated list from database
     group_by_database_array=json.loads(all_event_data_groupby_json)
     for group_by_database_list in range(len(group_by_database_array)):
-        #define Arrays
-        array_for_active_events=[]
-        array_for_not_active_events=[]
-        array_for_negative_values=[]
+
 
         #define variables from database data
         org_unit_id=group_by_database_array[group_by_database_list]['orgunit']
@@ -25,9 +22,8 @@ def updateData(all_event_data_groupby_json):
 
         # read events data from json file
         with open('data/events.json') as event:
-        # GET List of event for the same id
-            
-            #TODO:: START STEP1 get and print all event data
+            # GET List of event for the same id
+            #? START STEP1 get and store all event data
             # get all tracker event from events file
             stored_event_data = json.load(event)
             # filter event by condiations
@@ -56,13 +52,12 @@ def updateData(all_event_data_groupby_json):
 
             # update quantity before exchange
             quantity_before_exchange=int(dispensed_quantity)-(complete_dispense_value+active_dispense_value)
-            # print("complete_dispense_value:", complete_dispense_value)
-            # print("active_dispense_value:", active_dispense_value)
-            # print("quantity_before_exchange:", quantity_before_exchange)
+            #* print("complete_dispense_value:", complete_dispense_value)
+            #* print("active_dispense_value:", active_dispense_value)
+            #* print("quantity_before_exchange:", quantity_before_exchange)
             
             ##? START STEP2 split every event to different status category
-            split_events(quantity_before_exchange,filter_events_by_medication_organization,array_for_active_events,array_for_negative_values,array_for_not_active_events)
-            
+            array_for_active_events,array_for_not_active_events,array_for_negative_values=split_events(quantity_before_exchange,filter_events_by_medication_organization)
             ##? START STEP3 Start Update on DHIS2
             update_scenario(quantity_before_exchange,array_for_active_events,array_for_negative_values,org_unit_id,medicine_id)
 

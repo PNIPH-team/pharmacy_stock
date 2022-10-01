@@ -76,7 +76,7 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
 
 def get_all_time_entries():
     # TODO:: last check
-    url_address = dhis_url+"/api/events?pageSize=10000&program=fnIEoaflGxX&order=eventDate:desc&attributeCc=PGUY5iGEFgW&attributeCos=n34JlJWVzHx"
+    url_address = dhis_url+"/api/events?pageSize=10000&program=fnIEoaflGxX&order=eventDate:desc"
     headers = {'Content-Type': 'application/json'}
 
     # find out total number of pages
@@ -91,7 +91,7 @@ def get_all_time_entries():
     for page in range(0, total_pages):
 
         url = dhis_url+"/api/events?page=" + \
-            str(page)+"&pageSize=10000&program=fnIEoaflGxX&order=eventDate:desc&attributeCc=PGUY5iGEFgW&attributeCos=n34JlJWVzHx"
+            str(page)+"&pageSize=10000&program=fnIEoaflGxX&order=eventDate:desc"
         response = requests.get(url=url, headers=headers, auth=HTTPBasicAuth(
             dhis_user, dhis_password)).json()
         all_time_entries.append(response)
@@ -126,9 +126,7 @@ def get_tei_org(org_unit_id):
 
 def get_event(tei_id):
     get_event = requests.get(
-        dhis_url+"/api/events?trackedEntityInstance=" + tei_id + "&lastUpdatedEndDate=" +
-        today_date + "&lastUpdatedStartDate=" +
-        today_date + "&fields=event,orgUnit,program",
+        dhis_url+"/api/events?trackedEntityInstance=" + tei_id + "&fields=event,orgUnit,program",
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_event.text
 

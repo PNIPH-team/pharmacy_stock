@@ -1,14 +1,18 @@
 from datetime import datetime
 from config import today
 
-def split_events(quantity_before_exchange,filter_events_by_medication_organization,array_for_active_events,array_for_negative_values,array_for_not_active_events):
+def split_events(quantity_before_exchange,filter_events_by_medication_organization):
+    #define Arrays
+    array_for_active_events=[]
+    array_for_not_active_events=[]
+    array_for_negative_values=[]
     # Check exchange value if not zero else print zero
     if(quantity_before_exchange>0 or quantity_before_exchange<0):
         # loop on all met the conditions events
         for dic in filter_events_by_medication_organization:
             # Set variables with default values
             event_status_active=False
-            not_expired=False
+            not_expired=True
             event_stock_quantity_dispensed=None
             event_stock_total=None
             event_quantity_stock=None
@@ -27,8 +31,6 @@ def split_events(quantity_before_exchange,filter_events_by_medication_organizati
                         not_expired=True
                     else:
                         not_expired=False
-                else:
-                    not_expired=True
                 
                 # Store event dispensed stock quantity value
                 if(dic['dataValues'][data_value_loop_three_number]['dataElement']=='LijzB622Z22'):
@@ -43,7 +45,7 @@ def split_events(quantity_before_exchange,filter_events_by_medication_organizati
                     event_quantity_stock=int(dic['dataValues'][data_value_loop_three_number]['value'])
 
             # Check and add to lists        
-            if(event_status_active and not_expired):
+            if(event_status_active and  not_expired):
                 array_for_active_events.append({"event":dic['event'],"date":datetime.strptime(dic['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock_quantity_dispensed":event_stock_quantity_dispensed,"stock_total":event_stock_total,"quantity_stock":event_quantity_stock,"query":dic})
                 array_for_negative_values.append({"event":dic['event'],"date":datetime.strptime(dic['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock_quantity_dispensed":event_stock_quantity_dispensed,"stock_total":event_stock_total,"quantity_stock":event_quantity_stock,"query":dic})
             else:
@@ -51,3 +53,4 @@ def split_events(quantity_before_exchange,filter_events_by_medication_organizati
                 array_for_not_active_events.append({"event": dic['event'] ,"date":datetime.strptime(dic['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock_quantity_dispensed":event_stock_quantity_dispensed,"stock_total":event_stock_total,"quantity_stock":event_quantity_stock,"query":dic})
                 array_for_negative_values.append({"event":dic['event'],"date":datetime.strptime(dic['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock_quantity_dispensed":event_stock_quantity_dispensed,"stock_total":event_stock_total,"quantity_stock":event_quantity_stock,"query":dic})
 
+    return array_for_active_events,array_for_not_active_events,array_for_negative_values
