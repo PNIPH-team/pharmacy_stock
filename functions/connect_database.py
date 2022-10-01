@@ -13,7 +13,7 @@ def connect_database():
                                              password=password, ssl_disabled=True)
         if connection.is_connected():
             db_Info = connection.get_server_info()
-            print("Connected to MySQL Server version ", db_Info)
+            # print("Connected to MySQL Server version ", db_Info)
             cursor = connection.cursor()
             return connection,cursor
     except Error as e:

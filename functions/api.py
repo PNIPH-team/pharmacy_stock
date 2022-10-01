@@ -32,25 +32,9 @@ def create_event(org_unit_id, quantity_before_exchange, medicine_id):
 
     create_event = requests.post(dhis_url+"/api/events",
                                  data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
-    print(create_event.request.body)
+    # print(create_event.request.body)
     att_req_data = json.loads(create_event.text)
     return att_req_data
-
-# Update exist event on dhis2
-
-
-def update_event(event_id, event_data):
-    print(event_data)
-    headers = {'Content-Type': 'application/json'}
-    try:
-        update_event = requests.put(dhis_url+"/api/events/"+event_id, data=event_data,
-                                    headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
-        update_request_response = json.loads(update_event.text)
-        print(json.dumps(update_request_response))
-        print("Update Event Stock Successfully")
-    except:
-        print("An exception occurred")
-
 
 def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_dispensed,event_id,organisation_id,program_id,status):
     headers = {'Content-Type': 'application/json'}
@@ -75,16 +59,16 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
         "orgUnit": organisation_id,
         "program": program_id
     }
-    print(json.dumps(event_data))
+    # print(json.dumps(event_data))
     try:
         update_event = requests.put(dhis_url+"/api/events/"+event_id, data=json.dumps(event_data),
                                     headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
         update_request_response = json.loads(update_event.text)
-        print(json.dumps(update_request_response))
-        print("Update Event Stock Successfully")
+        # print(json.dumps(update_request_response))
+        # print("Update Event Stock Successfully")
         return True
     except:
-        print("An exception occurred")
+        # print("An exception occurred")
         return False
 
 # Get all dhis2 event & store it on json

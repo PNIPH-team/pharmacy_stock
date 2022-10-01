@@ -1,8 +1,7 @@
 # Define all type of action to reverse it to dhis2 system (capture)
 import json
-from datetime import datetime
-from ..api import create_event, new_update_event,update_event
-from config import today
+from functions.module.split_events import split_events
+from functions.module.update_scenario import update_scenario
 
 # This function work to check every new event with existing event on capture program
 def updateData(all_event_data_groupby_json):
@@ -18,9 +17,9 @@ def updateData(all_event_data_groupby_json):
         org_unit_id=group_by_database_array[group_by_database_list]['orgunit']
         medicine_id=group_by_database_array[group_by_database_list]['m']
         dispensed_quantity=group_by_database_array[group_by_database_list]['q']
-        print("org_unit_id:",org_unit_id)
-        print("medicine_id:",medicine_id)
-        print("dispensed_quantity:",dispensed_quantity)
+        # print("org_unit_id:",org_unit_id)
+        # print("medicine_id:",medicine_id)
+        # print("dispensed_quantity:",dispensed_quantity)
         complete_dispense_value=0
         active_dispense_value=0
 
@@ -57,210 +56,13 @@ def updateData(all_event_data_groupby_json):
 
             # update quantity before exchange
             quantity_before_exchange=int(dispensed_quantity)-(complete_dispense_value+active_dispense_value)
-            print("complete_dispense_value:", complete_dispense_value)
-            print("active_dispense_value:", active_dispense_value)
-            print("quantity_before_exchange:", quantity_before_exchange)
+            # print("complete_dispense_value:", complete_dispense_value)
+            # print("active_dispense_value:", active_dispense_value)
+            # print("quantity_before_exchange:", quantity_before_exchange)
             
-            #TODO:: END STEP1 get and print all event data
+            ##? START STEP2 split every event to different status category
+            split_events(quantity_before_exchange,filter_events_by_medication_organization,array_for_active_events,array_for_negative_values,array_for_not_active_events)
+            
+            ##? START STEP3 Start Update on DHIS2
+            update_scenario(quantity_before_exchange,array_for_active_events,array_for_negative_values,org_unit_id,medicine_id)
 
-            ##TODO:: START STEP2 split every event to different status category
-
-            # Check exchange value if not zero else print zero
-            if(quantity_before_exchange>0 or quantity_before_exchange<0):
-                # loop on all met the conditions events
-                for dic in filter_events_by_medication_organization:
-                    # Set variables with default values
-                    event_status_active=False
-                    not_expired=False
-                    event_stock_quantity_dispensed=None
-                    event_stock_total=None
-                    event_quantity_stock=None
-                    # date_for_stock_inventory=datetime.strptime(dic['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date() if dic['eventDate']!=None else ''
-                    # Check event status
-                    if(dic['status']=='ACTIVE'):
-                        event_status_active=True
-                    
-                    # Loop on all data values
-                    for data_value_loop_three_number in range(len(dic['dataValues'])):
-                        # Check if event expired or not else not expired
-                        if(dic['dataValues'][data_value_loop_three_number]['dataElement']=='xW95VLnIqyP'):
-                            event_date_value = datetime.strptime(dic['dataValues'][data_value_loop_three_number]['value'], '%Y-%m-%d').date()
-                            event_today_date_value =  datetime.strptime(today.strftime( '%Y-%m-%d'), '%Y-%m-%d').date()
-                            if(event_today_date_value<=event_date_value):
-                                not_expired=True
-                            else:
-                                not_expired=False
-                        else:
-                            not_expired=True
-                        
-                        # Store event dispensed stock quantity value
-                        if(dic['dataValues'][data_value_loop_three_number]['dataElement']=='LijzB622Z22'):
-                            event_stock_quantity_dispensed=int(dic['dataValues'][data_value_loop_three_number]['value'])
-                        
-                        # Store event total stock value
-                        if(dic['dataValues'][data_value_loop_three_number]['dataElement']=='bry41dJZ99x'):
-                            event_stock_total=int(dic['dataValues'][data_value_loop_three_number]['value'])
-                        
-                        # Store event stock quantity value
-                        if(dic['dataValues'][data_value_loop_three_number]['dataElement']=='eskqGfai0gc'):
-                            event_quantity_stock=int(dic['dataValues'][data_value_loop_three_number]['value'])
-
-                    # Check and add to lists        
-                    if(event_status_active and not_expired):
-                        # print("in")
-                        array_for_active_events.append({"event":dic['event'],"date":datetime.strptime(dic['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock_quantity_dispensed":event_stock_quantity_dispensed,"stock_total":event_stock_total,"quantity_stock":event_quantity_stock,"query":dic})
-                        array_for_negative_values.append({"event":dic['event'],"date":datetime.strptime(dic['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock_quantity_dispensed":event_stock_quantity_dispensed,"stock_total":event_stock_total,"quantity_stock":event_quantity_stock,"query":dic})
-                    else:
-                        # print("out")
-                        # check data of stock inventory
-                        
-                        array_for_not_active_events.append({"event": dic['event'] ,"date":datetime.strptime(dic['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock_quantity_dispensed":event_stock_quantity_dispensed,"stock_total":event_stock_total,"quantity_stock":event_quantity_stock,"query":dic})
-                        array_for_negative_values.append({"event":dic['event'],"date":datetime.strptime(dic['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date(),"stock_quantity_dispensed":event_stock_quantity_dispensed,"stock_total":event_stock_total,"quantity_stock":event_quantity_stock,"query":dic})
-
-
-
-            ##TODO:: END STEP2 
-
-            ###! START STEP3
-            print("Start Step 3 ..")
-            #? Start Update on DHIS2
-            sorted_date_array = sorted(array_for_active_events, key=lambda x: x['date'])
-            sorted_date_array_negative = sorted(array_for_negative_values, key=lambda x: x['date'],reverse=True)
-            while quantity_before_exchange!=0:
-                print("val"+ str(quantity_before_exchange))
-                
-            # No Edit Scenario
-                if(quantity_before_exchange==0):
-                    print("No Edit")
-        
-            # Positive Scenario
-                elif(quantity_before_exchange>0):
-                    print("Edit Positive")
-                    #? Create New Event
-                    if(len(sorted_date_array)==0 and quantity_before_exchange !=0 ):
-                        print('Number of active event is zero')
-                        create_event(org_unit_id,quantity_before_exchange,medicine_id)
-                        quantity_before_exchange=0
-                        continue
-
-                    #? Update Existed Event
-                    elif(len(sorted_date_array)>0):
-                        print('>')
-                        #sort array by date from old to new
-                        for sorted_event_number in range(len(sorted_date_array)):
-                            # set variables
-                            event_id=sorted_date_array[0]['event']
-                            organisation_id=sorted_date_array[0]['query']['orgUnit']
-                            program_id=sorted_date_array[0]['query']['program']
-                            quantity_stock=sorted_date_array[0]['quantity_stock']
-                            stock_quantity_dispensed=sorted_date_array[0]['stock_quantity_dispensed']
-                            medication_id=sorted_date_array[0]['query']['attributeCategoryOptions']
-                            stock_total=sorted_date_array[0]['stock_total']
-                            # calculate quantity 
-                            calculation_value=quantity_before_exchange-stock_total # 108 - 80 = 28 # 280 - -250
-                            if stock_quantity_dispensed is None:
-                                stock_quantity_dispensed=0
-                            if stock_total is None:
-                                stock_total=0
-                            if quantity_stock is None:
-                                quantity_stock=0
-                            # when event not enough
-                            if(calculation_value>0):
-                                # its just means this event not en.  
-                                # set new stock dispensed value equal old dispensed plus total of stock
-                                new_stock_quantity_dispensed=(stock_quantity_dispensed+stock_total) # 20+80
-                                # set new total of quentity equal old quantity minus new stock dispensed
-                                total_quantity=quantity_stock-new_stock_quantity_dispensed
-                                new_update_event(medication_id,total_quantity,quantity_stock,new_stock_quantity_dispensed,event_id,organisation_id,program_id,"COMPLETED")
-                                quantity_before_exchange=calculation_value #28
-                                sorted_date_array.pop(0)
-                                if(len(sorted_date_array)==0):
-                                    break
-                                else:
-                                    continue
-                            else:
-                            # when event total is enough or minus
-                                new_stock_quantity_dispensed=(stock_quantity_dispensed+quantity_before_exchange) # 72+28=100
-                                total_quantity=quantity_stock-new_stock_quantity_dispensed
-                                new_update_event(medication_id,total_quantity,quantity_stock,new_stock_quantity_dispensed,event_id,organisation_id,program_id,"ACTIVE")
-                                quantity_before_exchange=0
-                                break
-                                
-                        
-        #?? Negative Scenario
-                elif(quantity_before_exchange<0):
-                    # print(forNegArray)
-                    print("Edit Negative")
-                    #? Create New Event
-                    if(len(sorted_date_array_negative)==0 and quantity_before_exchange !=0 ):
-                        print('Number of negative event is zero')
-                        # create_event(org_unit_id,quantity_before_exchange,medicine_id)
-                        quantity_before_exchange=0
-                        continue
-                    
-                    #! Update Exist Event
-                    elif(len(sorted_date_array_negative)>0):
-                        print('<')
-                        
-                        #sort array by date from old to new
-                        for negative_sorted_event_number in range(len(sorted_date_array_negative)):
-                            # set variables
-                            event_id=sorted_date_array_negative[0]['event']
-                            organisation_id=sorted_date_array_negative[0]['query']['orgUnit']
-                            program_id=sorted_date_array_negative[0]['query']['program']
-                            quantity_stock=sorted_date_array_negative[0]['quantity_stock']
-                            stock_quantity_dispensed=sorted_date_array_negative[0]['stock_quantity_dispensed']
-                            medication_id=sorted_date_array_negative[0]['query']['attributeCategoryOptions']
-                            stock_total=sorted_date_array_negative[0]['stock_total']
-                            # calculate quantity 
-                            print("quantity_before_exchange+stock_total")
-                            print(quantity_before_exchange+stock_total)
-                            print(stock_quantity_dispensed)
-                            print(quantity_before_exchange)
-                            calculation_value=quantity_before_exchange+stock_quantity_dispensed # -250+50 =-200 + 200 // -180 + 200= 20
-                            if stock_quantity_dispensed is None:
-                                stock_quantity_dispensed=0
-                            if stock_total is None:
-                                stock_total=0
-                            if quantity_stock is None:
-                                quantity_stock=0
-
-
-                            print("quantity_stock")
-                            print(quantity_stock)
-                            print("stock_quantity_dispensed")
-                            print(stock_quantity_dispensed)
-                            print("stock_total")
-                            print(stock_total)
-                            print("calculation_value")
-                            print(calculation_value)
-                            print("stock_quantity_dispensed")
-                            print(stock_quantity_dispensed)
-                            print("stock_total")
-                            print(stock_total)
-                            print("quantity_stock")
-                            print(quantity_stock)
-                            # when event not enough
-                            if(calculation_value<0):
-                                # its just means this event not en.  
-                                # set new stock dispensed value equal old dispensed plus total of stock
-                                new_stock_quantity_dispensed=0 # 60-40 # 60
-                                # set new total of quentity equal old quantity minus new stock dispensed
-                                total_quantity=quantity_stock # 100-100
-                                new_update_event(medication_id,total_quantity,quantity_stock,new_stock_quantity_dispensed,event_id,organisation_id,program_id,"ACTIVE")
-                                quantity_before_exchange=calculation_value #28
-                                sorted_date_array_negative.pop(0)
-                                if(len(sorted_date_array_negative)==0):
-                                    break
-                                else:
-                                    continue
-                            else:
-                                print("else if")
-                            # when event total is enough or minus
-                                new_stock_quantity_dispensed=(stock_quantity_dispensed+quantity_before_exchange) # 80 +-80 = 0
-                                total_quantity=quantity_stock-new_stock_quantity_dispensed # 0-80=-80
-                                new_update_event(medication_id,total_quantity,quantity_stock,new_stock_quantity_dispensed,event_id,organisation_id,program_id,"ACTIVE")
-                                quantity_before_exchange=0
-                                break
-
-                ###! End STEP3
