@@ -74,10 +74,10 @@ def update_scenario(quantity_before_exchange,array_for_active_events,array_for_n
                 quantity_before_exchange=0
                 continue
             
-            #! Update Exist Event
+            # Update Exist Event
             elif(len(sorted_date_array_negative)>0):
                 # print('<')
-                
+              
                 #sort array by date from old to new
                 for negative_sorted_event_number in range(len(sorted_date_array_negative)):
                     # set variables
@@ -86,9 +86,15 @@ def update_scenario(quantity_before_exchange,array_for_active_events,array_for_n
                     program_id=sorted_date_array_negative[0]['query']['program']
                     quantity_stock=sorted_date_array_negative[0]['quantity_stock']
                     stock_quantity_dispensed=sorted_date_array_negative[0]['stock_quantity_dispensed']
+                    if(stock_quantity_dispensed is None):
+                        stock_quantity_dispensed=0
                     medication_id=sorted_date_array_negative[0]['query']['attributeCategoryOptions']
                     stock_total=sorted_date_array_negative[0]['stock_total']
                     # calculate quantity 
+                    print("quantity_before_exchange")
+                    print(quantity_before_exchange)
+                    print("stock_quantity_dispensed")
+                    print(stock_quantity_dispensed)
                     calculation_value=quantity_before_exchange+stock_quantity_dispensed # -250+50 =-200 + 200 // -180 + 200= 20
                     if stock_quantity_dispensed is None:
                         stock_quantity_dispensed=0
