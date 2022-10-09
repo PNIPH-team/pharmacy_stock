@@ -38,10 +38,10 @@ def main():
 
 # run main function
 if __name__ == "__main__":
-    # main()
-    schedule.every(1).minutes.do(main)
+    main()
+    # schedule.every(10).minutes.do(main)
   
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
   

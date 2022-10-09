@@ -5,7 +5,7 @@ from datetime import date
 host='localhost'
 database='stock'
 user='root'
-port=8889
+port=3306
 password='root'
 
 #DHIS2 Configuration 
