@@ -2,6 +2,7 @@
 import json
 from functions.module.split_events import split_events
 from functions.module.update_scenario import update_scenario
+from functions.files import pathReturn
 
 # This function work to check every new event with existing event on capture program
 def updateData(all_event_data_groupby_json):
@@ -9,19 +10,15 @@ def updateData(all_event_data_groupby_json):
     group_by_database_array=json.loads(all_event_data_groupby_json)
     for group_by_database_list in range(len(group_by_database_array)):
 
-
         #define variables from database data
         org_unit_id=group_by_database_array[group_by_database_list]['orgunit']
         medicine_id=group_by_database_array[group_by_database_list]['m']
         dispensed_quantity=group_by_database_array[group_by_database_list]['q']
-        # print("org_unit_id:",org_unit_id)
-        # print("medicine_id:",medicine_id)
-        # print("dispensed_quantity:",dispensed_quantity)
         complete_dispense_value=0
         active_dispense_value=0
 
         # read events data from json file
-        with open('data/events.json') as event:
+        with open(pathReturn()+'/data/events.json') as event:
             # GET List of event for the same id
             #? START STEP1 get and store all event data
             # get all tracker event from events file
@@ -52,9 +49,6 @@ def updateData(all_event_data_groupby_json):
 
             # update quantity before exchange
             quantity_before_exchange=int(dispensed_quantity)-(complete_dispense_value+active_dispense_value)
-            #* print("complete_dispense_value:", complete_dispense_value)
-            #* print("active_dispense_value:", active_dispense_value)
-            #* print("quantity_before_exchange:", quantity_before_exchange)
             
             ##? START STEP2 split every event to different status category
             array_for_active_events,array_for_not_active_events,array_for_negative_values=split_events(quantity_before_exchange,filter_events_by_medication_organization)

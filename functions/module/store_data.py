@@ -19,14 +19,12 @@ def store_data(newest_data,database_connection,cursor):
                     first_insert_value = (new_data['event_id'],new_data['tei'],new_data['program'],new_data['stage'],new_data['orgunit'],new_data['date'], new_data['m1'], check(new_data['q1']), new_data['m2'], check(new_data['q2']), new_data['m3'], check(new_data['q3']), new_data['m4'], check(new_data['q4']) ,new_data['m5'], check(new_data['q5']), new_data['m6'], check(new_data['q6']) ,new_data['m7'], check(new_data['q7']) ,new_data['m8'], check(new_data['q8']), new_data['m9'], check(new_data['q9']) ,new_data['m10'], check(new_data['q10']),new_data['m11'], check(new_data['q11']),new_data['last_update'])
                     cursor.execute(first_insert_sql, first_insert_value)
                     database_connection.commit()
-                    # print(cursor.rowcount, "record row_data_prescribed inserted.")
                 else:
                     #if exist update the row
                     fist_update_sql = "UPDATE row_data_prescribed SET m1=%s,q1=%s,m2=%s,q2=%s,m3=%s,q3=%s,m4=%s,q4=%s,m5=%s,q5=%s,m6=%s,q6=%s,m7=%s,q7=%s,m8=%s,q8=%s,m9=%s,q9=%s,m10=%s,q10=%s,m11=%s,q11=%s,last_update=%s WHERE event_id=%s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s"
                     fist_update_value = (new_data['m1'], check(new_data['q1']), new_data['m2'], check(new_data['q2']), new_data['m3'], check(new_data['q3']), new_data['m4'], check(new_data['q4']) ,new_data['m5'], check(new_data['q5']), new_data['m6'], check(new_data['q6']) ,new_data['m7'], check(new_data['q7']) ,new_data['m8'], check(new_data['q8']), new_data['m9'], check(new_data['q9']) ,new_data['m10'], check(new_data['q10']),new_data['m11'], check(new_data['q11']),new_data['last_update'],new_data['event_id'],new_data['tei'],new_data['program'],new_data['stage'],new_data['orgunit'])
                     cursor.execute(fist_update_sql, fist_update_value)
                     database_connection.commit()
-                    # print(cursor.rowcount, "record row_data_prescribed Updated.")
                 where_query="WHERE event_id= '"+ new_data['event_id']+"' AND tei = '"+ new_data['tei']+"' AND program = '"+ new_data['program']+"' AND stage = '"+ new_data['stage']+"' AND orgunit='"+ new_data['orgunit']+"'"
       
                 if new_data['m1'] and new_data['q1']:
@@ -80,14 +78,12 @@ def store_data(newest_data,database_connection,cursor):
                     second_insert_value = (new_data['event_id'],new_data['tei'],new_data['program'],new_data['stage'],new_data['orgunit'],new_data['date'], new_data['m1'], check(new_data['q1']), new_data['m2'], check(new_data['q2']), new_data['m3'], check(new_data['q3']), new_data['m4'], check(new_data['q4']) ,new_data['m5'], check(new_data['q5']), new_data['m6'], check(new_data['q6']) ,new_data['m7'], check(new_data['q7']) ,new_data['m8'], check(new_data['q8']), new_data['m9'], check(new_data['q9']) ,new_data['m10'], check(new_data['q10']),new_data['m11'], check(new_data['q11']),new_data['m12'], check(new_data['q12']),new_data['m13'], check(new_data['q13']),new_data['m14'], check(new_data['q14']),new_data['last_update'])
                     cursor.execute(second_insert_sql, second_insert_value)
                     database_connection.commit()
-                    # print(cursor.rowcount, "record to row_data_frequently inserted.")
                 else:
                     #if exist update the row
                     second_update_sql = "UPDATE row_data_frequently SET m1=%s,q1=%s,m2=%s,q2=%s,m3=%s,q3=%s,m4=%s,q4=%s,m5=%s,q5=%s,m6=%s,q6=%s,m7=%s,q7=%s,m8=%s,q8=%s,m9=%s,q9=%s,m10=%s,q10=%s,m11=%s,q11=%s,m12=%s,q12=%s,m13=%s,q13=%s,m14=%s,q14=%s, last_update=%s WHERE event_id= %s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s"
                     second_update_val = (new_data['m1'], check(new_data['q1']), new_data['m2'], check(new_data['q2']), new_data['m3'], check(new_data['q3']), new_data['m4'], check(new_data['q4']) ,new_data['m5'], check(new_data['q5']), new_data['m6'], check(new_data['q6']) ,new_data['m7'], check(new_data['q7']) ,new_data['m8'], check(new_data['q8']), new_data['m9'], check(new_data['q9']) ,new_data['m10'], check(new_data['q10']),new_data['m11'], check(new_data['q11']),new_data['m12'], check(new_data['q12']),new_data['m13'], check(new_data['q13']),new_data['m14'], check(new_data['q14']),new_data['last_update'],new_data['event_id'],new_data['tei'],new_data['program'],new_data['stage'],new_data['orgunit'])
                     cursor.execute(second_update_sql, second_update_val)
                     database_connection.commit()
-                    # print(cursor.rowcount, "record row_data_frequently Updated.")
                 where_query2="WHERE event_id= '"+ new_data['event_id'] + "' AND tei= '"+ new_data['tei']+"' AND program = '"+ new_data['program']+"' AND stage = '"+ new_data['stage']+"' AND orgunit='"+ new_data['orgunit']+"'"
     
                 if new_data['m1'] and new_data['q1']:
@@ -153,14 +149,12 @@ def store_data(newest_data,database_connection,cursor):
                 insert_stock_value = (all_medication_data['event_id'],all_medication_data['tei'], all_medication_data['program'],all_medication_data['stage'], all_medication_data['orgunit'], all_medication_data['date'], all_medication_data['dataElement'], all_medication_data['m'], all_medication_data['q'])
                 cursor.execute(insert_stock_query, insert_stock_value)
                 database_connection.commit()
-                # print(cursor.rowcount, "record stock_data inserted.")
             else:
                 # If exist then update record 
                 updateSQL = "UPDATE stock_data SET m=%s, q=%s, edit_date=%s WHERE event_id = %s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s AND dataElement = %s"
                 updateVal = (all_medication_data['m'],all_medication_data['q'],all_medication_data['edit_date'],all_medication_data['event_id'],all_medication_data['tei'],all_medication_data['program'],all_medication_data['stage'],all_medication_data['orgunit'],all_medication_data['dataElement'])
                 cursor.execute(updateSQL, updateVal)
                 database_connection.commit()
-                # print(cursor.rowcount, "record stock_data Updated.")
         # Select and store all stock data by medicine and orgunit
         sum_query = "SELECT orgunit,m,SUM(q) AS q FROM stock_data GROUP BY m,orgunit"
         cursor.execute(sum_query)

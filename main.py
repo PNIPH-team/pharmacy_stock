@@ -9,15 +9,15 @@ from functions.module.update import updateData
 from functions.api import get_all_time_entries
 import schedule
 import time
+from functions.files import pathReturn
 # define main function
 def main():
     start_time = time.time()
 
-    print("Start")
     #connect with local database Mysql with credentials 
     connection,cursor = connect_database()
     # check if category options updated or not
-    if not os.path.exists('data/categoryOptions.json'):
+    if not os.path.exists(pathReturn()+'/data/categoryOptions.json'):
         category_options()
     #for loop for all org and get list of updated event by date (today date)
     event_data=get_org_data()
@@ -30,8 +30,6 @@ def main():
         # update event data
         updateData(store_array)
     else:
-        # print empty if no new event found
-        print("Empty Data *No New Data Found")
         pass
 
     print("--- %s seconds ---" % (time.time() - start_time))
@@ -39,9 +37,3 @@ def main():
 # run main function
 if __name__ == "__main__":
     main()
-    # schedule.every(10).minutes.do(main)
-  
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
-  

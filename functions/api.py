@@ -3,7 +3,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 from config import dhis_password, dhis_url, dhis_user, today_date
-from .files import writefile
+from .files import writefile,pathReturn
 
 # Create event on dhis2
 
@@ -32,12 +32,18 @@ def create_event(org_unit_id, quantity_before_exchange, medicine_id):
 
     create_event = requests.post(dhis_url+"/api/events",
                                  data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
-    # print(create_event.request.body)
     att_req_data = json.loads(create_event.text)
     return att_req_data
 
-def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_dispensed,event_id,organisation_id,program_id,status):
+def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_dispensed,event_id,organisation_id,program_id,status,expire_date):
     headers = {'Content-Type': 'application/json'}
+    add_date=None
+    if(expire_date!=None):
+        add_date={
+                "dataElement": "xW95VLnIqyP",
+                "value": expire_date.strftime("%Y-%m-%d")
+            }
+    
     event_data = {
         "attributeCategoryOptions": medication_id,
         "status": status,
@@ -53,22 +59,20 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
             {
                 "dataElement": "LijzB622Z22",
                 "value": int(stock_quantity_dispensed)
-            }
+            },
+            add_date
+           
         ],
         "event": event_id,
         "orgUnit": organisation_id,
         "program": program_id
     }
-    # print(json.dumps(event_data))
     try:
         update_event = requests.put(dhis_url+"/api/events/"+event_id, data=json.dumps(event_data),
                                     headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
         update_request_response = json.loads(update_event.text)
-        # print(json.dumps(update_request_response))
-        # print("Update Event Stock Successfully")
         return True
     except:
-        # print("An exception occurred")
         return False
 
 # Get all dhis2 event & store it on json
@@ -99,7 +103,7 @@ def get_all_time_entries():
 
     # prettify JSON
     data = json.dumps(all_time_entries, sort_keys=True, indent=4)
-    writefile('data/events.json', json.loads(data))
+    writefile(pathReturn()+'/data/events.json', json.loads(data))
 
 # Get all org
 

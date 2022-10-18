@@ -2,7 +2,7 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
-from .files import writefile
+from .files import writefile,pathReturn
 from config import dhis_url,dhis_user,dhis_password
 
 categoryOptionsList = []
@@ -25,14 +25,14 @@ def category_options():
         category_options_req = requests.get(
             category_options_req["pager"]['nextPage'], auth=HTTPBasicAuth(dhis_user, dhis_password)).json()
         store_category(category_options_req["categoryOptions"])
-    writefile("./data/categoryOptions.json", categoryOptionsList)
+    writefile(pathReturn()+"/data/categoryOptions.json", categoryOptionsList)
     return categoryOptionsList
     
 
 
 
 def get_code_data(medicine_name):
-    with open('data/categoryOptions.json') as categoryOptionsFile:
+    with open(pathReturn()+'/data/categoryOptions.json') as categoryOptionsFile:
          catFile = json.load(categoryOptionsFile)
          MappingList=list(filter(lambda x:x["code"]==medicine_name,catFile))
          return MappingList[0]['id']

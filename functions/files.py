@@ -18,3 +18,6 @@ def writefile(file_name, data):
     with open(file.name, "w") as files:
         files.write(json_data)
     file.close()
+
+def pathReturn():
+    return os.getcwd()
