@@ -9,7 +9,7 @@ port=8889
 password='root'
 
 #DHIS2 Configuration 
-dhis_url="https://hmis.moh.ps/tr-dev-integration"
+dhis_url="https://hmis.moh.ps/tr-family-dev"
 dhis_user='Saleh'
 dhis_password='Test@123'
 

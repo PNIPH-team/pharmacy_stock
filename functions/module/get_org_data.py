@@ -134,6 +134,7 @@ def get_org_data():
                                     event_value = int(
                                         get_event_id_data['dataValues'][numberOfDataValue]['value'])
                                     new_data_array_Prescribed['q11'] = event_value
+                                
 
                             # Add prescribed array to all_array variable
                             all_array.append(new_data_array_Prescribed)
@@ -146,8 +147,14 @@ def get_org_data():
                             new_data_array_Frequently['program']=program_id
                             new_data_array_Frequently['stage']=program_stage_type
                             new_data_array_Frequently['orgunit']=organisation_id
-                            new_data_array_Frequently['date'] = str(datetime.strptime(get_event_id_data['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
-                            new_data_array_Frequently['last_update'] = str(datetime.strptime(get_event_id_data['dueDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
+                            try:
+                                new_data_array_Frequently['date'] = str(datetime.strptime(get_event_id_data['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
+                            except:
+                                new_data_array_Frequently['date'] =  None
+                            try:
+                                new_data_array_Frequently['last_update'] = str(datetime.strptime(get_event_id_data['dueDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
+                            except:
+                                new_data_array_Frequently['last_update'] =  None
                             for numberOfDataValue in range(len(get_event_id_data['dataValues'])):
                                 event_id_data = get_event_id_data['dataValues'][numberOfDataValue]['dataElement']                                
                                 # Check Frequently Medication

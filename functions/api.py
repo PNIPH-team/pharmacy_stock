@@ -120,7 +120,7 @@ def get_org_req():
 def get_tei_org(org_unit_id):
     get_tei = requests.get(
         dhis_url+"/api/trackedEntityInstances?ou=" +
-        org_unit_id+"&fields=trackedEntityInstance",
+        org_unit_id+"&program=vj5cpA2OOfZ&fields=trackedEntityInstance",
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_tei.text
 

@@ -32,10 +32,16 @@ def category_options():
 
 
 def get_code_data(medicine_name):
-    with open(pathReturn()+'/data/categoryOptions.json') as categoryOptionsFile:
+    print(medicine_name)
+    try:
+        with open(pathReturn()+'/data/categoryOptions.json') as categoryOptionsFile:
          catFile = json.load(categoryOptionsFile)
          MappingList=list(filter(lambda x:x["code"]==medicine_name,catFile))
          return MappingList[0]['id']
+    except:
+        category_options()
+        print("An exception occurred")
+    
 
 
 

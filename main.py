@@ -26,6 +26,7 @@ def main():
         # get all event as list from all dhis2 organizations
         store_array=store_data(event_data,connection,cursor)
         # update event file
+        print("GetData")
         get_all_time_entries()
         # update event data
         updateData(store_array)
