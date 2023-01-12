@@ -6,14 +6,14 @@ from functions.category_options import category_options
 from functions.module.get_org_data import get_org_data
 from functions.module.store_data import store_data
 from functions.module.update import updateData
-from functions.api import get_all_time_entries
+from functions.api import get_all_time_entries,store_logs
 import schedule
 import time
 from functions.files import pathReturn
 # define main function
 def main():
     start_time = time.time()
-
+    print("Start Time:",start_time)
     #connect with local database Mysql with credentials 
     connection,cursor = connect_database()
     # check if category options updated or not
@@ -32,7 +32,8 @@ def main():
         updateData(store_array)
     else:
         pass
-
+    store_logs()
+    print("End Time:",time.time())
     print("--- %s seconds ---" % (time.time() - start_time))
 
 # run main function

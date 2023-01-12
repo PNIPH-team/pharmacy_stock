@@ -17,14 +17,21 @@ def store_data(newest_data,database_connection,cursor):
                     #if not exist insert new row to database
                     first_insert_sql = "INSERT INTO row_data_prescribed (event_id,tei,program,stage,orgUnit,date,m1,q1,m2,q2,m3,q3,m4,q4,m5,q5,m6,q6,m7,q7,m8,q8,m9,q9,m10,q10,m11,q11,last_update) VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s)"
                     first_insert_value = (new_data['event_id'],new_data['tei'],new_data['program'],new_data['stage'],new_data['orgunit'],new_data['date'], new_data['m1'], check(new_data['q1']), new_data['m2'], check(new_data['q2']), new_data['m3'], check(new_data['q3']), new_data['m4'], check(new_data['q4']) ,new_data['m5'], check(new_data['q5']), new_data['m6'], check(new_data['q6']) ,new_data['m7'], check(new_data['q7']) ,new_data['m8'], check(new_data['q8']), new_data['m9'], check(new_data['q9']) ,new_data['m10'], check(new_data['q10']),new_data['m11'], check(new_data['q11']),new_data['last_update'])
-                    cursor.execute(first_insert_sql, first_insert_value)
-                    database_connection.commit()
+                    try:
+                        cursor.execute(first_insert_sql, first_insert_value)
+                        database_connection.commit()
+                    except:
+                        print("error first_result")
                 else:
                     #if exist update the row
                     fist_update_sql = "UPDATE row_data_prescribed SET m1=%s,q1=%s,m2=%s,q2=%s,m3=%s,q3=%s,m4=%s,q4=%s,m5=%s,q5=%s,m6=%s,q6=%s,m7=%s,q7=%s,m8=%s,q8=%s,m9=%s,q9=%s,m10=%s,q10=%s,m11=%s,q11=%s,last_update=%s WHERE event_id=%s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s"
                     fist_update_value = (new_data['m1'], check(new_data['q1']), new_data['m2'], check(new_data['q2']), new_data['m3'], check(new_data['q3']), new_data['m4'], check(new_data['q4']) ,new_data['m5'], check(new_data['q5']), new_data['m6'], check(new_data['q6']) ,new_data['m7'], check(new_data['q7']) ,new_data['m8'], check(new_data['q8']), new_data['m9'], check(new_data['q9']) ,new_data['m10'], check(new_data['q10']),new_data['m11'], check(new_data['q11']),new_data['last_update'],new_data['event_id'],new_data['tei'],new_data['program'],new_data['stage'],new_data['orgunit'])
-                    cursor.execute(fist_update_sql, fist_update_value)
-                    database_connection.commit()
+                    
+                    try:
+                        cursor.execute(fist_update_sql, fist_update_value)
+                        database_connection.commit()
+                    except:
+                        print("error fist_update_value")
                 where_query="WHERE event_id= '"+ new_data['event_id']+"' AND tei = '"+ new_data['tei']+"' AND program = '"+ new_data['program']+"' AND stage = '"+ new_data['stage']+"' AND orgunit='"+ new_data['orgunit']+"'"
       
                 if new_data['m1'] and new_data['q1']:
@@ -76,14 +83,21 @@ def store_data(newest_data,database_connection,cursor):
                     #if not exist insert new row to database
                     second_insert_sql = "INSERT INTO row_data_frequently (event_id,tei,program,stage,orgUnit,date,m1,q1,m2,q2,m3,q3,m4,q4,m5,q5,m6,q6,m7,q7,m8,q8,m9,q9,m10,q10,m11,q11,m12,q12,m13,q13,m14,q14,last_update) VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s,%s)"
                     second_insert_value = (new_data['event_id'],new_data['tei'],new_data['program'],new_data['stage'],new_data['orgunit'],new_data['date'], new_data['m1'], check(new_data['q1']), new_data['m2'], check(new_data['q2']), new_data['m3'], check(new_data['q3']), new_data['m4'], check(new_data['q4']) ,new_data['m5'], check(new_data['q5']), new_data['m6'], check(new_data['q6']) ,new_data['m7'], check(new_data['q7']) ,new_data['m8'], check(new_data['q8']), new_data['m9'], check(new_data['q9']) ,new_data['m10'], check(new_data['q10']),new_data['m11'], check(new_data['q11']),new_data['m12'], check(new_data['q12']),new_data['m13'], check(new_data['q13']),new_data['m14'], check(new_data['q14']),new_data['last_update'])
-                    cursor.execute(second_insert_sql, second_insert_value)
-                    database_connection.commit()
+                    
+                    try:
+                        cursor.execute(second_insert_sql, second_insert_value)
+                        database_connection.commit()
+                    except:
+                        print("error second_update_val")
                 else:
                     #if exist update the row
                     second_update_sql = "UPDATE row_data_frequently SET m1=%s,q1=%s,m2=%s,q2=%s,m3=%s,q3=%s,m4=%s,q4=%s,m5=%s,q5=%s,m6=%s,q6=%s,m7=%s,q7=%s,m8=%s,q8=%s,m9=%s,q9=%s,m10=%s,q10=%s,m11=%s,q11=%s,m12=%s,q12=%s,m13=%s,q13=%s,m14=%s,q14=%s, last_update=%s WHERE event_id= %s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s"
                     second_update_val = (new_data['m1'], check(new_data['q1']), new_data['m2'], check(new_data['q2']), new_data['m3'], check(new_data['q3']), new_data['m4'], check(new_data['q4']) ,new_data['m5'], check(new_data['q5']), new_data['m6'], check(new_data['q6']) ,new_data['m7'], check(new_data['q7']) ,new_data['m8'], check(new_data['q8']), new_data['m9'], check(new_data['q9']) ,new_data['m10'], check(new_data['q10']),new_data['m11'], check(new_data['q11']),new_data['m12'], check(new_data['q12']),new_data['m13'], check(new_data['q13']),new_data['m14'], check(new_data['q14']),new_data['last_update'],new_data['event_id'],new_data['tei'],new_data['program'],new_data['stage'],new_data['orgunit'])
-                    cursor.execute(second_update_sql, second_update_val)
-                    database_connection.commit()
+                    try:
+                        cursor.execute(second_update_sql, second_update_val)
+                        database_connection.commit()
+                    except:
+                        print("error second_update_val")
                 where_query2="WHERE event_id= '"+ new_data['event_id'] + "' AND tei= '"+ new_data['tei']+"' AND program = '"+ new_data['program']+"' AND stage = '"+ new_data['stage']+"' AND orgunit='"+ new_data['orgunit']+"'"
     
                 if new_data['m1'] and new_data['q1']:
@@ -147,8 +161,12 @@ def store_data(newest_data,database_connection,cursor):
                 #if not exist then insert new record 
                 insert_stock_query = "INSERT INTO stock_data (event_id,tei, program,stage, orgunit, date, dataElement, m, q) VALUES (%s ,%s , %s,%s,	%s,	%s,%s,%s,%s)"
                 insert_stock_value = (all_medication_data['event_id'],all_medication_data['tei'], all_medication_data['program'],all_medication_data['stage'], all_medication_data['orgunit'], all_medication_data['date'], all_medication_data['dataElement'], all_medication_data['m'], all_medication_data['q'])
-                cursor.execute(insert_stock_query, insert_stock_value)
-                database_connection.commit()
+                
+                try:
+                    cursor.execute(insert_stock_query, insert_stock_value)
+                    database_connection.commit()
+                except:
+                    print("error insert_stock_value")
             else:
                 # If exist then update record 
                 updateSQL = "UPDATE stock_data SET m=%s, q=%s, edit_date=%s WHERE event_id = %s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s AND dataElement = %s"

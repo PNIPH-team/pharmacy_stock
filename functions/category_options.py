@@ -32,7 +32,7 @@ def category_options():
 
 
 def get_code_data(medicine_name):
-    print(medicine_name)
+    # print(medicine_name)
     try:
         with open(pathReturn()+'/data/categoryOptions.json') as categoryOptionsFile:
          catFile = json.load(categoryOptionsFile)
@@ -40,6 +40,7 @@ def get_code_data(medicine_name):
          return MappingList[0]['id']
     except:
         category_options()
+        print(medicine_name)
         print("An exception occurred")
     
 

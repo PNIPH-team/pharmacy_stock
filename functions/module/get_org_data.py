@@ -51,8 +51,14 @@ def get_org_data():
                             new_data_array_Prescribed['program']=program_id
                             new_data_array_Prescribed['stage']=program_stage_type
                             new_data_array_Prescribed['orgunit']=organisation_id
-                            new_data_array_Prescribed['date'] = str(datetime.strptime(get_event_id_data['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
-                            new_data_array_Prescribed['last_update'] = str(datetime.strptime(get_event_id_data['dueDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
+                            try:
+                                new_data_array_Prescribed['date'] = str(datetime.strptime(get_event_id_data['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
+                            except:
+                                new_data_array_Prescribed['last_update'] = None
+                            try:
+                                new_data_array_Prescribed['last_update'] = str(datetime.strptime(get_event_id_data['dueDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
+                            except:
+                                new_data_array_Prescribed['date'] = None
                             for numberOfDataValue in range(len(get_event_id_data['dataValues'])):
                                 event_id_data = get_event_id_data['dataValues'][numberOfDataValue]['dataElement']
                                 # Check Prescribed Medication

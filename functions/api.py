@@ -6,12 +6,16 @@ from config import dhis_password, dhis_url, dhis_user, today_date
 from .files import writefile,pathReturn
 
 # Create event on dhis2
-
+post_log=[]
+put_log=[]
+def store_logs():
+     writefile(pathReturn()+'/data/post_log.json', post_log)
+     writefile(pathReturn()+'/data/put_log.json', put_log)
 
 def create_event(org_unit_id, quantity_before_exchange, medicine_id):
     data = {
         "status": "ACTIVE",
-        "program": "fnIEoaflGxX",
+        "program": "JK1cEZufnoP",
         "enrollment": "lzL2rq6vcqw",
         "enrollmentStatus": "ACTIVE",
         "orgUnit": org_unit_id,
@@ -33,6 +37,7 @@ def create_event(org_unit_id, quantity_before_exchange, medicine_id):
     create_event = requests.post(dhis_url+"/api/events",
                                  data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
     att_req_data = json.loads(create_event.text)
+    post_log.append({"data":att_req_data})
     return att_req_data
 
 def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_dispensed,event_id,organisation_id,program_id,status,expire_date):
@@ -43,11 +48,7 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
                 "dataElement": "xW95VLnIqyP",
                 "value": expire_date.strftime("%Y-%m-%d")
             }
-    
-    event_data = {
-        "attributeCategoryOptions": medication_id,
-        "status": status,
-        "dataValues": [
+    array_values=[
             {
                 "dataElement": "bry41dJZ99x",
                 "value": int(total_quantity)
@@ -59,18 +60,24 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
             {
                 "dataElement": "LijzB622Z22",
                 "value": int(stock_quantity_dispensed)
-            },
-            add_date
-           
-        ],
+            }
+        ]
+    if(add_date!=None):
+        array_values.append(add_date)
+    event_data = {
+        "attributeCategoryOptions": medication_id,
+        "status": status,
+        "dataValues": array_values,
         "event": event_id,
         "orgUnit": organisation_id,
         "program": program_id
     }
     try:
+        print(event_data)
         update_event = requests.put(dhis_url+"/api/events/"+event_id, data=json.dumps(event_data),
                                     headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
         update_request_response = json.loads(update_event.text)
+        put_log.append({"data":update_request_response})
         return True
     except:
         return False
@@ -80,13 +87,16 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
 
 def get_all_time_entries():
     # TODO:: last check
-    url_address = dhis_url+"/api/events?pageSize=10000&program=fnIEoaflGxX&order=eventDate:desc"
+    url_address = dhis_url+"/api/events?pageSize=10000&program=JK1cEZufnoP&order=eventDate:desc&fields=event,attributeCategoryOptions,orgUnit,program,status,orgUnitName,eventDate,created,lastUpdated,dataValues"
     headers = {'Content-Type': 'application/json'}
 
     # find out total number of pages
     r = requests.get(url=url_address, headers=headers,
                      auth=HTTPBasicAuth(dhis_user, dhis_password)).json()
-    total_pages = int(r['pager']['pageCount'])
+    try:
+        total_pages = int(r['pager']['pageCount'])
+    except:
+        total_pages = 1
 
     # results will be appended to this list
     all_time_entries = []
@@ -95,7 +105,7 @@ def get_all_time_entries():
     for page in range(0, total_pages):
 
         url = dhis_url+"/api/events?page=" + \
-            str(page)+"&pageSize=10000&program=fnIEoaflGxX&order=eventDate:desc"
+            str(page)+"&pageSize=10000&program=JK1cEZufnoP&order=eventDate:desc&fields=event,attributeCategoryOptions,orgUnit,program,status,orgUnitName,eventDate,created,lastUpdated,dataValues"
         response = requests.get(url=url, headers=headers, auth=HTTPBasicAuth(
             dhis_user, dhis_password)).json()
         all_time_entries.append(response)
