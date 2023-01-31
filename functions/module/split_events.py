@@ -1,5 +1,5 @@
 from datetime import datetime
-from config import today
+from config import today,dataElementForQuantity,dataElementForTotalQuantity,dataElementForQuantityStock
 
 def split_events(quantity_before_exchange,filter_events_by_medication_organization):
     #define Arrays
@@ -33,15 +33,15 @@ def split_events(quantity_before_exchange,filter_events_by_medication_organizati
                         not_expired=False
                 
                 # Store event dispensed stock quantity value
-                if(dic['dataValues'][data_value_loop_three_number]['dataElement']=='LijzB622Z22'):
+                if(dic['dataValues'][data_value_loop_three_number]['dataElement']==dataElementForQuantity):
                     event_stock_quantity_dispensed=int(dic['dataValues'][data_value_loop_three_number]['value'])
                 
                 # Store event total stock value
-                if(dic['dataValues'][data_value_loop_three_number]['dataElement']=='bry41dJZ99x'):
+                if(dic['dataValues'][data_value_loop_three_number]['dataElement']==dataElementForTotalQuantity):
                     event_stock_total=int(dic['dataValues'][data_value_loop_three_number]['value'])
                 
                 # Store event stock quantity value
-                if(dic['dataValues'][data_value_loop_three_number]['dataElement']=='eskqGfai0gc'):
+                if(dic['dataValues'][data_value_loop_three_number]['dataElement']==dataElementForQuantityStock):
                     event_quantity_stock=int(dic['dataValues'][data_value_loop_three_number]['value'])
 
             # Check and add to lists        

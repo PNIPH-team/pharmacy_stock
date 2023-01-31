@@ -7,7 +7,7 @@ def store_data(newest_data,database_connection,cursor):
         the_big_data_newest_list = []
         for number_of_new_data in range(len(newest_data)):
             new_data=newest_data[number_of_new_data]
-            if(new_data['stage']=="JV6n7FhC7xp"):
+            if(new_data['stage']=="SwEuK4WXyxu"):
                 #check if this row of data exist or not
                 first_sql = "SELECT id FROM row_data_prescribed WHERE event_id=%s AND tei = %s AND program = %s AND stage = %s AND orgUnit = %s"
                 first_adr = (new_data['event_id'],new_data['tei'],new_data['program'],new_data['stage'],new_data['orgunit'])

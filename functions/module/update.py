@@ -3,7 +3,7 @@ import json
 from functions.module.split_events import split_events
 from functions.module.update_scenario import update_scenario
 from functions.files import pathReturn
-
+from config import dataElementForQuantity
 # This function work to check every new event with existing event on capture program
 def updateData(all_event_data_groupby_json):
     #Load last updated list from database
@@ -37,7 +37,7 @@ def updateData(all_event_data_groupby_json):
                         # loop on all event data values
                         for data_value_loop_one_number in range(len(dic['dataValues'])):
                             # Check if data value has Stock Quantity dispensed
-                            if(dic['dataValues'][data_value_loop_one_number]['dataElement']=='LijzB622Z22'):
+                            if(dic['dataValues'][data_value_loop_one_number]['dataElement']==dataElementForQuantity):
                                 # update active dispense value 
                                 active_dispense_value= active_dispense_value + int(dic['dataValues'][data_value_loop_one_number]['value'])
                     # Check event Completed or not
@@ -45,7 +45,7 @@ def updateData(all_event_data_groupby_json):
                         # loop on all event data values
                         for data_value_loop_two_number in range(len(dic['dataValues'])):
                                 # Check if data value has Stock Quantity dispensed
-                                if(dic['dataValues'][data_value_loop_two_number]['dataElement']=='LijzB622Z22'):
+                                if(dic['dataValues'][data_value_loop_two_number]['dataElement']==dataElementForQuantity):
                                     # update complete dispense value
                                     complete_dispense_value= complete_dispense_value+int(dic['dataValues'][data_value_loop_two_number]['value'])
 
