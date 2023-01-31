@@ -8,10 +8,11 @@ from .files import writefile,pathReturn,createFiles
 # Create event on dhis2
 post_log=[]
 put_log=[]
-def store_logs(date):
+def store_logs(date,array):
      createFiles(pathReturn()+'/data/'+date)
      writefile(pathReturn()+'/data/'+date+'/post_log.json', post_log)
      writefile(pathReturn()+'/data/'+date+'/put_log.json', put_log)
+     writefile(pathReturn()+'/data/'+date+'/data_log.json', array)
 
 def create_event(org_unit_id, quantity_before_exchange, medicine_id):
     data = {
@@ -74,7 +75,7 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
         "program": program_id
     }
     try:
-        print(event_data)
+        # print(event_data)
         update_event = requests.put(dhis_url+"/api/events/"+event_id, data=json.dumps(event_data),
                                     headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
         update_request_response = json.loads(update_event.text)
@@ -127,7 +128,7 @@ def get_tei_org(org_unit_id,startUpdateDate,endUpdateDate):
         dhis_url+"/api/trackedEntityInstances?ou=" +
         org_unit_id+"&program="+programId+"&fields=trackedEntityInstance&lastUpdatedStartDate="+startUpdateDate+"&lastUpdatedEndDate="+endUpdateDate,
         auth=HTTPBasicAuth(dhis_user, dhis_password))
-    print(get_tei.url)
+    # print(get_tei.url)
     return get_tei.text
 
 # Get all event for every tei

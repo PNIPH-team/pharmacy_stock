@@ -23,11 +23,8 @@ def updateData(all_event_data_groupby_json):
             #? START STEP1 get and store all event data
             # get all tracker event from events file
             stored_event_data = json.load(event)
-            # print(stored_event_data)
-            # print(stored_event_data[0]['events'])
             # filter event by condiations
             filter_events_by_medication_organization=list(filter(lambda x:(x["attributeCategoryOptions"],x["orgUnit"])==(medicine_id,org_unit_id),stored_event_data[0]['events']))
-            # print(filter_events_by_medication_organization)
             # loop on all met the conditions events to update active and complete dispensed values [ update dispensed values ]
             for dic in filter_events_by_medication_organization:
                 # Check if event attribute option equal medication id
