@@ -10,13 +10,12 @@ from functions.api import get_all_time_entries,store_logs
 from datetime import datetime
 import time
 from functions.files import pathReturn,createFiles
-from config import current_time
 
 # define main function
 def main():
     start_time = time.time()
-    print("Start Time:",current_time)
     current_time = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    print("Start Time:",current_time)
     #connect with local database Mysql with credentials 
     connection,cursor = connect_database()
     # check if category options updated or not
