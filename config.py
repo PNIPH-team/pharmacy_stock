@@ -259,10 +259,10 @@ Pharmacy_Frequently_Order_ASPART  = "al2QYMnQXGv"
 Pharmacy_Frequently_Order_ASPART_code  = "ASPART"
 # 43 Pharmacy_Frequently_Order_Famotidine 20
 Pharmacy_Frequently_Order_Famotidine   = "v0np97mr2po"
-Pharmacy_Frequently_Order_Famotidine_code   = ""
+Pharmacy_Frequently_Order_Famotidine_code   = "FAMOTIDINE 20mg"
 # 44 Pharmacy_Frequently_Order_Famotidine40
 Pharmacy_Frequently_Order_Famotidine40  = "C02vkeyiJXv"
-Pharmacy_Frequently_Order_Famotidine40_code  = ""
+Pharmacy_Frequently_Order_Famotidine40_code  = "FAMOTIDINE 40mg"
 
 
 
