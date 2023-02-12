@@ -9,20 +9,20 @@ port = 8889
 password = 'root'
 
 # DHIS2 Configuration
-dhis_url = "https://hmis.moh.ps/tr-family-stg"
+dhis_url = "https://hmis.moh.ps/tr-family-prod"
 dhis_user = 'Saleh'
 dhis_password = 'Test@123'
 
 # DHIS2 Program Configuration pharmacy program
 programId = "vj5cpA2OOfZ"
-
 # DHIS2 Program Configuration pharmacy stock program
 programIdStock = "JK1cEZufnoP"
+
 #LijzB622Z22 > Pharmacy_QTY_Stock_Despensed
 dataElementForQuantity = "LijzB622Z22"
 #bry41dJZ99x > Pharmacy_QTY_Stock_Total
 dataElementForTotalQuantity = "bry41dJZ99x"
-#eskqGfai0gc > Pharmacy_QTY_Stock_Total
+#eskqGfai0gc > Pharmacy_QTY_Stock
 dataElementForQuantityStock = "eskqGfai0gc"
 
 # DHIS2 Program Stage Configuration
@@ -243,8 +243,8 @@ Pharmacy_Frequently_Order_GLARGINE_code  = "GLARGINE"
 Pharmacy_Frequently_Order_DETEMIR  = "DETEMIR"
 Pharmacy_Frequently_Order_DETEMIR_code  = "T09111EdJZ6"
 # 38 Pharmacy_Frequently_Order_INSULIN NPH HM
-Pharmacy_Frequently_Order_INSULIN_NPH   = "M-191-0015"
-Pharmacy_Frequently_Order_INSULIN_NPH_code  = "mXQgGN5ixoK"
+Pharmacy_Frequently_Order_INSULIN_NPH   = "mXQgGN5ixoK"
+Pharmacy_Frequently_Order_INSULIN_NPH_code  = "M-191-0015"
 # 39 Pharmacy_Frequently_Order_INSULIN ACTRAPID
 Pharmacy_Frequently_Order_INSULIN_ACT   = "vBREaiw8hXQ"
 Pharmacy_Frequently_Order_INSULIN_ACT_code   = "M-191-0005"
