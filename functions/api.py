@@ -13,6 +13,8 @@ def store_logs(date,array):
      writefile(pathReturn()+'/data/'+date+'/post_log.json', post_log)
      writefile(pathReturn()+'/data/'+date+'/put_log.json', put_log)
      writefile(pathReturn()+'/data/'+date+'/data_log.json', array)
+     post_log.clear()
+     put_log.clear()
 
 def create_event(org_unit_id, quantity_before_exchange, medicine_id):
     data = {

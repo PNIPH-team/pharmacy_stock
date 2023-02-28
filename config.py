@@ -237,32 +237,32 @@ Pharmacy_Frequently_Order_sitaGLIPTIN_code  = "M-192-1036"
 Pharmacy_Frequently_Order_INSULIN  = "JvnUNViHBVa"
 Pharmacy_Frequently_Order_INSULIN_code  = "M-191-0010"
 # 36 Pharmacy_Frequently_Order_GLARGINE
-Pharmacy_Frequently_Order_GLARGINE  = "JH1RjqRXdRB"
+Pharmacy_Frequently_Order_GLARGINE  = "MZ1rhMJcWX1"
 Pharmacy_Frequently_Order_GLARGINE_code  = "GLARGINE"
 # 37 Pharmacy_Frequently_Order_DETEMIR
-Pharmacy_Frequently_Order_DETEMIR  = "DETEMIR"
-Pharmacy_Frequently_Order_DETEMIR_code  = "T09111EdJZ6"
+Pharmacy_Frequently_Order_DETEMIR  = "YYzhFIxytQn"
+Pharmacy_Frequently_Order_DETEMIR_code  = "DETEMIR"
 # 38 Pharmacy_Frequently_Order_INSULIN NPH HM
-Pharmacy_Frequently_Order_INSULIN_NPH   = "mXQgGN5ixoK"
+Pharmacy_Frequently_Order_INSULIN_NPH   = "wYlE0QCJajH"
 Pharmacy_Frequently_Order_INSULIN_NPH_code  = "M-191-0015"
 # 39 Pharmacy_Frequently_Order_INSULIN ACTRAPID
-Pharmacy_Frequently_Order_INSULIN_ACT   = "vBREaiw8hXQ"
+Pharmacy_Frequently_Order_INSULIN_ACT   = "qo9lBth5ODw"
 Pharmacy_Frequently_Order_INSULIN_ACT_code   = "M-191-0005"
 # 40 Pharmacy_Frequently_Order_LISPRO
-Pharmacy_Frequently_Order_LISPRO  = "JFeLUqPdPzS"
+Pharmacy_Frequently_Order_LISPRO  = "V9VbXkR0iz6"
 Pharmacy_Frequently_Order_LISPRO_code  = "LISPRO"
 # 41 Pharmacy_Frequently_Order_GLULISINE
-Pharmacy_Frequently_Order_GLULISINE  = "Pul8hn2O9Yv"
+Pharmacy_Frequently_Order_GLULISINE  = "PG8lzFkqYy5"
 Pharmacy_Frequently_Order_GLULISINE_code  = "GLULISINE"
 # 42 Pharmacy_Frequently_Order_ASPART
-Pharmacy_Frequently_Order_ASPART  = "al2QYMnQXGv"
+Pharmacy_Frequently_Order_ASPART  = "MLygTTLwSh4"
 Pharmacy_Frequently_Order_ASPART_code  = "ASPART"
 # 43 Pharmacy_Frequently_Order_Famotidine 20
-Pharmacy_Frequently_Order_Famotidine   = "v0np97mr2po"
-Pharmacy_Frequently_Order_Famotidine_code   = "FAMOTIDINE 20mg"
+Pharmacy_Frequently_Order_Famotidine   = "tSI1rUFDRTG"
+Pharmacy_Frequently_Order_Famotidine_code   = "Famotidine 20"
 # 44 Pharmacy_Frequently_Order_Famotidine40
-Pharmacy_Frequently_Order_Famotidine40  = "C02vkeyiJXv"
-Pharmacy_Frequently_Order_Famotidine40_code  = "FAMOTIDINE 40mg"
+Pharmacy_Frequently_Order_Famotidine40  = "luwtzVS3nvf"
+Pharmacy_Frequently_Order_Famotidine40_code  = "Famotidine 40"
 
 
 
