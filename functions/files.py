@@ -20,4 +20,4 @@ def writefile(file_name, data):
     file.close()
 
 def pathReturn():
-    return os.getcwd()
+    return "/home/script/pharmacy_stock"
