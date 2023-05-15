@@ -19,13 +19,7 @@ def main():
     #connect with local database Mysql with credentials 
     connection,cursor = connect_database()
     # check if category options updated or not
-    if os.path.exists(pathReturn()+'/data/categoryOptions.json'):
-        os.remove(pathReturn()+'/data/categoryOptions.json')
-        print(f"{pathReturn()+'/data/categoryOptions.json'} has been removed.")
-    else:
-        print(f"{pathReturn()+'/data/categoryOptions.json'} does not exist.")
-    if not os.path.exists(pathReturn()+'/data/categoryOptions.json'):
-        category_options()
+    category_options()
     # #for loop for all org and get list of updated event by date (today date)
     event_data=get_org_data()
     # check event list if empty or not
@@ -44,7 +38,8 @@ def main():
 
 # run main function
 if __name__ == "__main__":
-    while True:
-        main()
-        time.sleep(2700)
+    main()
+    # while True:
+        # main()
+        # time.sleep(2700)
 

@@ -3,7 +3,8 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 from config import dhis_password, dhis_url, dhis_user, today_date,programId,programIdStock,dataElementForQuantity,dataElementForTotalQuantity,dataElementForQuantityStock
-from .files import writefile,pathReturn,createFiles
+from .files import writefile,pathReturn,createFiles,readfile
+import os
 
 # Create event on dhis2
 post_log=[]
@@ -87,34 +88,101 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
         return False
 
 # Get all dhis2 event & store it on json
+# def get_all_time_entries():
+#     url_address = f"{dhis_url}/api/events"
+#     headers = {'Content-Type': 'application/json'}
+
+#     # check if the events.json file exists
+#     if os.path.exists(pathReturn()+'/data/events.json'):
+#         # load existing data from the events.json file
+#         existing_data = readfile(pathReturn()+'/data/events.json')
+#         # get list of existing event IDs
+#         existing_ids = [event["event"] for event in existing_data]
+#         # get page number to resume from
+#         page = len(existing_data) // 10000 + 1
+#         # set all_time_entries to existing_data
+#         all_time_entries = existing_data
+#     else:
+#         # set page to 1 since there's no existing data
+#         page = 1
+#         # set existing_ids to an empty list
+#         existing_ids = []
+#         # set all_time_entries to an empty list
+#         all_time_entries = []
+
+#     is_last_page = True
+
+#     while is_last_page:
+#         # set up query parameters for current page
+#         query_params = {
+#             "program": programIdStock,
+#             "fields": "event,attributeCategoryOptions,orgUnit,program,status,orgUnitName,eventDate,created,lastUpdated,dataValues",
+#             "pageSize": 10000,
+#             "page": page,
+#             "order": "eventDate:desc"
+#         }
+
+#         # make HTTP request
+#         response = requests.get(url=url_address, headers=headers, auth=HTTPBasicAuth(
+#             dhis_user, dhis_password), params=query_params)
+
+#         # check if request was successful
+#         response.raise_for_status()
+
+#         # extract JSON data
+#         data = response.json()
+
+#         # extract new events from current page
+#         new_events = [event for event in data["events"] if event["event"] not in existing_ids]
+
+#         # append new events to all time entries
+#         all_time_entries.extend(new_events)
+
+#         # update existing_ids with the event IDs from the current page
+#         existing_ids.extend([event["event"] for event in data["events"]])
+
+#         # check if there are more pages
+#         is_last_page = data["pager"]["isLastPage"]
+
+#         # increment page number for next iteration
+#         page += 1
+#         print(page)
+
+#     # write all data to JSON file
+#     writefile(pathReturn()+'/events.json', {"events":all_time_entries})
+
 def get_all_time_entries():
-    # TODO:: last check
-    url_address = dhis_url+"/api/events?pageSize=10000&program="+programIdStock+"&order=eventDate:desc&fields=event,attributeCategoryOptions,orgUnit,program,status,orgUnitName,eventDate,created,lastUpdated,dataValues"
+    url_address = f"{dhis_url}/api/events"
     headers = {'Content-Type': 'application/json'}
 
-    # find out total number of pages
-    r = requests.get(url=url_address, headers=headers,
-                     auth=HTTPBasicAuth(dhis_user, dhis_password)).json()
-    try:
-        total_pages = int(r['pager']['pageCount'])
-    except:
-        total_pages = 1
-
-    # results will be appended to this list
+    # set page to 1 since there's no existing data
+    page = 1
+    # set all_time_entries to an empty list
     all_time_entries = []
 
-    # loop through all pages and return JSON object
-    for page in range(0, total_pages):
+    is_last_page = True
 
-        url = dhis_url+"/api/events?page=" + \
-            str(page)+"&pageSize=10000&program="+programIdStock+"&order=eventDate:desc&fields=event,attributeCategoryOptions,orgUnit,program,status,orgUnitName,eventDate,created,lastUpdated,dataValues"
-        response = requests.get(url=url, headers=headers, auth=HTTPBasicAuth(
-            dhis_user, dhis_password)).json()
-        all_time_entries.append(response)
+    while is_last_page:
+        # set up query parameters for current page
+        query_params = {
+            "program": programIdStock,
+            "fields": "event,attributeCategoryOptions,orgUnit,program,status,orgUnitName,eventDate,created,lastUpdated,dataValues",
+            "pageSize": 10000,
+            "page": page,
+            "order": "eventDate:desc"
+        }
+
+        # make HTTP request
+        response = requests.get(url=url_address, headers=headers, auth=HTTPBasicAuth(
+            dhis_user, dhis_password), params=query_params).json()
+
+        all_time_entries.extend(response['events'])
+        # check if there are more pages§
+        is_last_page = response["pager"]["isLastPage"]
+        # increment page number for next iteration
         page += 1
-
-    # prettify JSON
-    data = json.dumps(all_time_entries, sort_keys=True, indent=4)
+    # write all data to JSON file
+    data = json.dumps([{"events":all_time_entries}], sort_keys=True, indent=4)
     writefile(pathReturn()+'/data/events.json', json.loads(data))
 
 # Get all org

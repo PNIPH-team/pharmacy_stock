@@ -26,6 +26,8 @@ def store_data(newest_data, database_connection, cursor):
                     database_connection.commit()
                 except:
                     print("error first_result")
+                    print(first_insert_sql)
+                    print(first_insert_value)
             else:
                 # if exist update the row
                 fist_update_sql = "UPDATE row_data_prescribed SET m1=%s,q1=%s,m2=%s,q2=%s,m3=%s,q3=%s,m4=%s,q4=%s,m5=%s,q5=%s,m6=%s,q6=%s,m7=%s,q7=%s,m8=%s,q8=%s,m9=%s,q9=%s,m10=%s,q10=%s,m11=%s,q11=%s,last_update=%s WHERE event_id=%s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s"
@@ -112,6 +114,8 @@ def store_data(newest_data, database_connection, cursor):
                     database_connection.commit()
                 except:
                     print("error second_update_val")
+                    print(second_insert_sql)
+                    print(second_insert_value)
             else:
                 # if exist update the row
                 second_update_sql = "UPDATE row_data_frequently SET m1=%s,q1=%s,m2=%s,q2=%s,m3=%s,q3=%s,m4=%s,q4=%s,m5=%s,q5=%s,m6=%s,q6=%s,m7=%s,q7=%s,m8=%s,q8=%s,m9=%s,q9=%s,m10=%s,q10=%s,m11=%s,q11=%s,m12=%s,q12=%s,m13=%s,q13=%s,m14=%s,q14=%s,m15=%s,q15=%s,m16=%s,q16=%s,m17=%s,q17=%s,m18=%s,q18=%s,m19=%s,q19=%s,m20=%s,q20=%s,m21=%s,q21=%s,m22=%s,q22=%s,m23=%s,q23=%s,m24=%s,q24=%s,m25=%s,q25=%s,m26=%s,q26=%s,m27=%s,q27=%s,m28=%s,q28=%s,m29=%s,q29=%s,m30=%s,q30=%s,m31=%s,q31=%s,m32=%s,q32=%s,m33=%s,q33=%s,m34=%s,q34=%s,m35=%s,q35=%s,m36=%s,q36=%s,m37=%s,q37=%s,m38=%s,q38=%s,m39=%s,q39=%s,m40=%s,q40=%s,m41=%s,q41=%s,m42=%s,q42=%s,m43=%s,q43=%s,m44=%s,q44=%s, last_update=%s WHERE event_id= %s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s"
@@ -128,6 +132,8 @@ def store_data(newest_data, database_connection, cursor):
                     database_connection.commit()
                 except:
                     print("error second_update_val")
+                    print(second_insert_sql)
+                    print(second_insert_value)
             where_query2 = "WHERE event_id= '" + new_data['event_id'] + "' AND tei= '" + new_data['tei']+"' AND program = '" + \
                 new_data['program']+"' AND stage = '" + new_data['stage'] + \
                 "' AND orgunit='" + new_data['orgunit']+"'"

@@ -42,7 +42,7 @@ def update_scenario(quantity_before_exchange,array_for_active_events,array_for_n
                         # its just means this event not en.  
                         # set new stock dispensed value equal old dispensed plus total of stock
                         new_stock_quantity_dispensed=(stock_quantity_dispensed+stock_total) # 20+80
-                        # set new total of quentity equal old quantity minus new stock dispensed
+                        # set new total of quantity equal old quantity minus new stock dispensed
                         total_quantity=quantity_stock-new_stock_quantity_dispensed
                         new_update_event(medication_id,total_quantity,quantity_stock,new_stock_quantity_dispensed,event_id,organisation_id,program_id,"COMPLETED",event_expire_date)
                         quantity_before_exchange=calculation_value #28
