@@ -16,7 +16,6 @@ def get_org_data():
     # loop on all org ids
     for data_from_org_unit in range(len(get_org_unit_data['organisationUnits'])):
         org_unit_id = get_org_unit_data['organisationUnits'][data_from_org_unit]['id']
-        # print("org_unit_id:",org_unit_id)
         # Get all tei for all org
         get_tei_data = json.loads(get_tei_org(
             org_unit_id, first_day, last_day))
@@ -26,7 +25,6 @@ def get_org_data():
             for number_of_tei in range(len(get_tei_data['trackedEntityInstances'])):
                 # store org_tei data to array
                 tei_id = get_tei_data['trackedEntityInstances'][number_of_tei]['trackedEntityInstance']
-                # print("tei_id:",tei_id)
                 # Get all event for every tei
                 event_data = json.loads(get_event(tei_id))
                 for number_of_event in range(len(event_data['events'])):
@@ -49,7 +47,6 @@ def get_org_data():
                                                  "last_update": ""}
                     # define event id and organisation id variable
                     event_id = event_data['events'][number_of_event]['event']
-                    # print("event_id:",event_id)
                     organisation_id = event_data['events'][number_of_event]['orgUnit']
                     # Get all data for every event
                     get_event_id_data = json.loads(get_event_data(event_id))
@@ -590,11 +587,6 @@ def get_org_data():
                                     event_value = int(
                                         get_event_id_data['dataValues'][numberOfDataValue]['value'])
                                     new_data_array_Frequently['q44'] = event_value
-
-
-
-
-
 
 
                             # Add frequently array to all_array variable

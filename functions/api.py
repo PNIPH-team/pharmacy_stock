@@ -88,69 +88,6 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
         return False
 
 # Get all dhis2 event & store it on json
-# def get_all_time_entries():
-#     url_address = f"{dhis_url}/api/events"
-#     headers = {'Content-Type': 'application/json'}
-
-#     # check if the events.json file exists
-#     if os.path.exists(pathReturn()+'/data/events.json'):
-#         # load existing data from the events.json file
-#         existing_data = readfile(pathReturn()+'/data/events.json')
-#         # get list of existing event IDs
-#         existing_ids = [event["event"] for event in existing_data]
-#         # get page number to resume from
-#         page = len(existing_data) // 10000 + 1
-#         # set all_time_entries to existing_data
-#         all_time_entries = existing_data
-#     else:
-#         # set page to 1 since there's no existing data
-#         page = 1
-#         # set existing_ids to an empty list
-#         existing_ids = []
-#         # set all_time_entries to an empty list
-#         all_time_entries = []
-
-#     is_last_page = True
-
-#     while is_last_page:
-#         # set up query parameters for current page
-#         query_params = {
-#             "program": programIdStock,
-#             "fields": "event,attributeCategoryOptions,orgUnit,program,status,orgUnitName,eventDate,created,lastUpdated,dataValues",
-#             "pageSize": 10000,
-#             "page": page,
-#             "order": "eventDate:desc"
-#         }
-
-#         # make HTTP request
-#         response = requests.get(url=url_address, headers=headers, auth=HTTPBasicAuth(
-#             dhis_user, dhis_password), params=query_params)
-
-#         # check if request was successful
-#         response.raise_for_status()
-
-#         # extract JSON data
-#         data = response.json()
-
-#         # extract new events from current page
-#         new_events = [event for event in data["events"] if event["event"] not in existing_ids]
-
-#         # append new events to all time entries
-#         all_time_entries.extend(new_events)
-
-#         # update existing_ids with the event IDs from the current page
-#         existing_ids.extend([event["event"] for event in data["events"]])
-
-#         # check if there are more pages
-#         is_last_page = data["pager"]["isLastPage"]
-
-#         # increment page number for next iteration
-#         page += 1
-#         print(page)
-
-#     # write all data to JSON file
-#     writefile(pathReturn()+'/events.json', {"events":all_time_entries})
-
 def get_all_time_entries():
     url_address = f"{dhis_url}/api/events"
     headers = {'Content-Type': 'application/json'}
