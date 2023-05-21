@@ -20,7 +20,7 @@ def writefile(file_name, data):
     file.close()
 
 def pathReturn():
-    return "/home/script/pharmacy_stock"
+    return "/Users/salehabbas/Documents/GitHub/pharmacy_stock"
 
 def readfile(file_name):
     if os.path.exists(file_name):

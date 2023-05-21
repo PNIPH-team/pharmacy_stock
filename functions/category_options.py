@@ -7,6 +7,7 @@ from config import dhis_url,dhis_user,dhis_password
 import os
 
 categoryOptionsList = []
+listOfOptionsErrors = []
 
 # this function to loop on all args & store data to list
 def store_category(args):
@@ -59,8 +60,8 @@ def get_code_data(medicine_name):
          MappingList=list(filter(lambda x:x["code"]==medicine_name,catFile))
          return MappingList[0]['id']
     except:
-        print(f"An exception occurred: {medicine_name} code not exist in {pathReturn()+'/data/categoryOptions.json'}")
-    
+        # print(f"An exception occurred: {medicine_name} code not exist in {pathReturn()+'/data/categoryOptions.json'}")
+        listOfOptionsErrors.append(medicine_name)
 
 
 

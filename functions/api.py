@@ -19,7 +19,7 @@ def store_logs(date,array):
 
 def create_event(org_unit_id, quantity_before_exchange, medicine_id):
     data = {
-        "status": "ACTIVE",
+        "status": "COMPLETED",
         "program": programIdStock,
         "enrollment": "lzL2rq6vcqw",
         "enrollmentStatus": "ACTIVE",
@@ -78,7 +78,6 @@ def new_update_event(medication_id,total_quantity,quantity_stock,stock_quantity_
         "program": program_id
     }
     try:
-        # print(event_data)
         update_event = requests.put(dhis_url+"/api/events/"+event_id, data=json.dumps(event_data),
                                     headers=headers, auth=HTTPBasicAuth(dhis_user, dhis_password))
         update_request_response = json.loads(update_event.text)
@@ -130,13 +129,28 @@ def get_org_req():
     return get_org_unit_req.text
 
 # Get all tei for all org
-def get_tei_org(org_unit_id,startUpdateDate,endUpdateDate):
-    get_tei = requests.get(
-        dhis_url+"/api/trackedEntityInstances?ou=" +
-        org_unit_id+"&program="+programId+"&fields=trackedEntityInstance&lastUpdatedStartDate="+startUpdateDate+"&lastUpdatedEndDate="+endUpdateDate,
-        auth=HTTPBasicAuth(dhis_user, dhis_password))
-    # print(get_tei.url)
-    return get_tei.text
+def get_tei_org(org_unit_id, startUpdateDate, endUpdateDate):
+    all_tei = []
+    page = 1
+    while True:
+        # Make API call
+        get_tei = requests.get(
+            dhis_url+"/api/trackedEntityInstances?ou=" +
+            org_unit_id+"&program="+programId+"&fields=trackedEntityInstance&lastUpdatedStartDate="+startUpdateDate+"&lastUpdatedEndDate="+endUpdateDate+"&page=" + str(page),
+            auth=HTTPBasicAuth(dhis_user, dhis_password))
+        # Check if response is empty
+        if not get_tei.json()['trackedEntityInstances']:
+            break
+        
+        # Append results to all_tei list
+        all_tei += get_tei.json()['trackedEntityInstances']
+        
+        # Increment page number
+        page += 1
+    # Extract list of TEI from all_tei
+    tei_list = [tei['trackedEntityInstance'] for tei in all_tei]
+    # Return concatenated result
+    return json.dumps({"trackedEntityInstances":tei_list})
 
 # Get all event for every tei
 def get_event(tei_id):

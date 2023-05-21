@@ -24,7 +24,7 @@ def get_org_data():
             # loop on all tei data
             for number_of_tei in range(len(get_tei_data['trackedEntityInstances'])):
                 # store org_tei data to array
-                tei_id = get_tei_data['trackedEntityInstances'][number_of_tei]['trackedEntityInstance']
+                tei_id = get_tei_data['trackedEntityInstances'][number_of_tei]
                 # Get all event for every tei
                 event_data = json.loads(get_event(tei_id))
                 for number_of_event in range(len(event_data['events'])):

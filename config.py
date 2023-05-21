@@ -5,11 +5,11 @@ from datetime import date, datetime
 host = 'localhost'
 database = 'stock'
 user = 'root'
-port = 3306
-password = 'Abcd@1234'
+port = 8889
+password = 'root'
 
 # DHIS2 Configuration
-dhis_url = "http://172.16.45.63:8069/tr-family-prod"
+dhis_url = "https://hmis.moh.ps/tr-family-prod"
 dhis_user = 'Saleh'
 dhis_password = 'Test@123'
 

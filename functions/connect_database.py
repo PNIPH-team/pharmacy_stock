@@ -12,8 +12,7 @@ def connect_database():
                                              port=port,
                                              password=password, ssl_disabled=True)
         if connection.is_connected():
-            db_Info = connection.get_server_info()
             cursor = connection.cursor()
             return connection,cursor
-    except Error as e:
-        print("Error while connecting to MySQL", e)
+    except mysql.connector.Error as err:
+        print("Error while connecting to MySQL", err)
