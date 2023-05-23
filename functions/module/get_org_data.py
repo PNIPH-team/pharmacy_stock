@@ -19,6 +19,7 @@ def get_org_data():
         # Get all tei for all org
         get_tei_data = json.loads(get_tei_org(
             org_unit_id, first_day, last_day))
+
         # check if has data
         if('trackedEntityInstances' in get_tei_data):
             # loop on all tei data
@@ -64,12 +65,13 @@ def get_org_data():
                                 new_data_array_Prescribed['date'] = str(datetime.strptime(
                                     get_event_id_data['eventDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
                             except:
-                                new_data_array_Prescribed['last_update'] = None
+                                new_data_array_Prescribed['date'] = None
                             try:
                                 new_data_array_Prescribed['last_update'] = str(datetime.strptime(
                                     get_event_id_data['dueDate'], '%Y-%m-%dT%H:%M:%S.%f').date())
                             except:
-                                new_data_array_Prescribed['date'] = None
+                                new_data_array_Prescribed['last_update'] = None
+
                             for numberOfDataValue in range(len(get_event_id_data['dataValues'])):
                                 event_id_data = get_event_id_data['dataValues'][numberOfDataValue]['dataElement']
                                 # Check Prescribed Medication
@@ -336,78 +338,77 @@ def get_org_data():
                                 if event_id_data == Pharmacy_Frequently_Order_HYDROCHLORTHIAZIDE:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m30'] = get_code_data(
-                                            Pharmacy_Frequently_Order_HYDROCHLORTHIAZIDE_code)   
+                                            Pharmacy_Frequently_Order_HYDROCHLORTHIAZIDE_code)
                                 # 31
                                 if event_id_data == Pharmacy_Frequently_Order_thyroxine50:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m31'] = get_code_data(
-                                            Pharmacy_Frequently_Order_thyroxine50_code)                               
+                                            Pharmacy_Frequently_Order_thyroxine50_code)
                                 # 32
                                 if event_id_data == Pharmacy_Frequently_Order_THYROXINE:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m32'] = get_code_data(
-                                            Pharmacy_Frequently_Order_THYROXINE_code)                               
+                                            Pharmacy_Frequently_Order_THYROXINE_code)
                                 # 33
                                 if event_id_data == Pharmacy_Frequently_Order_clopidogrel:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m33'] = get_code_data(
-                                            Pharmacy_Frequently_Order_clopidogrel_code)                                
+                                            Pharmacy_Frequently_Order_clopidogrel_code)
                                 # 34
                                 if event_id_data == Pharmacy_Frequently_Order_sitaGLIPTIN:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m34'] = get_code_data(
-                                            Pharmacy_Frequently_Order_sitaGLIPTIN_code)                                
+                                            Pharmacy_Frequently_Order_sitaGLIPTIN_code)
                                 # 35
                                 if event_id_data == Pharmacy_Frequently_Order_INSULIN:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m35'] = get_code_data(
-                                            Pharmacy_Frequently_Order_INSULIN_code)                                
+                                            Pharmacy_Frequently_Order_INSULIN_code)
                                 # 36
                                 if event_id_data == Pharmacy_Frequently_Order_GLARGINE:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m36'] = get_code_data(
-                                            Pharmacy_Frequently_Order_GLARGINE_code)                               
+                                            Pharmacy_Frequently_Order_GLARGINE_code)
                                 # 37
                                 if event_id_data == Pharmacy_Frequently_Order_DETEMIR:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m37'] = get_code_data(
-                                            Pharmacy_Frequently_Order_DETEMIR_code)                                
+                                            Pharmacy_Frequently_Order_DETEMIR_code)
                                 # 38
                                 if event_id_data == Pharmacy_Frequently_Order_INSULIN_NPH:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m38'] = get_code_data(
-                                            Pharmacy_Frequently_Order_INSULIN_NPH_code)                               
+                                            Pharmacy_Frequently_Order_INSULIN_NPH_code)
                                 # 39
                                 if event_id_data == Pharmacy_Frequently_Order_INSULIN_ACT:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m39'] = get_code_data(
-                                            Pharmacy_Frequently_Order_INSULIN_ACT_code)                               
+                                            Pharmacy_Frequently_Order_INSULIN_ACT_code)
                                 # 40
                                 if event_id_data == Pharmacy_Frequently_Order_LISPRO:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m40'] = get_code_data(
-                                            Pharmacy_Frequently_Order_LISPRO_code)                                
+                                            Pharmacy_Frequently_Order_LISPRO_code)
                                 # 41
                                 if event_id_data == Pharmacy_Frequently_Order_GLULISINE:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m41'] = get_code_data(
-                                            Pharmacy_Frequently_Order_GLULISINE_code)                               
+                                            Pharmacy_Frequently_Order_GLULISINE_code)
                                 # 42
                                 if event_id_data == Pharmacy_Frequently_Order_ASPART:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m42'] = get_code_data(
-                                            Pharmacy_Frequently_Order_ASPART_code)                              
+                                            Pharmacy_Frequently_Order_ASPART_code)
                                 # 43
                                 if event_id_data == Pharmacy_Frequently_Order_Famotidine:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m43'] = get_code_data(
-                                            Pharmacy_Frequently_Order_Famotidine_code)                               
+                                            Pharmacy_Frequently_Order_Famotidine_code)
                                 # 44
                                 if event_id_data == Pharmacy_Frequently_Order_Famotidine40:
                                     if get_event_id_data['dataValues'][numberOfDataValue]['value']:
                                         new_data_array_Frequently['m44'] = get_code_data(
-                                            Pharmacy_Frequently_Order_Famotidine40_code)                               
-                 
+                                            Pharmacy_Frequently_Order_Famotidine40_code)
 
                                 # Check Frequently Quantity
                                 if event_id_data == Pharmacy_FrequentlyMedication_Despensed_1:
@@ -427,9 +428,12 @@ def get_org_data():
                                         get_event_id_data['dataValues'][numberOfDataValue]['value'])
                                     new_data_array_Frequently['q4'] = event_value
                                 if event_id_data == Pharmacy_FrequentlyMedication_Despensed_5:
-                                    event_value = int(
-                                        get_event_id_data['dataValues'][numberOfDataValue]['value'])
-                                    new_data_array_Frequently['q5'] = event_value
+                                    try:
+                                        event_value = int(
+                                            get_event_id_data['dataValues'][numberOfDataValue]['value'])
+                                        new_data_array_Frequently['q5'] = event_value
+                                    except:
+                                        pass
                                 if event_id_data == Pharmacy_FrequentlyMedication_Despensed_6:
                                     event_value = int(
                                         get_event_id_data['dataValues'][numberOfDataValue]['value'])
@@ -587,7 +591,6 @@ def get_org_data():
                                     event_value = int(
                                         get_event_id_data['dataValues'][numberOfDataValue]['value'])
                                     new_data_array_Frequently['q44'] = event_value
-
 
                             # Add frequently array to all_array variable
                             all_array.append(new_data_array_Frequently)
