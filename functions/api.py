@@ -93,8 +93,6 @@ def new_update_event(medication_id, total_quantity, quantity_stock, stock_quanti
         return False
 
 # Get all dhis2 event & store it on json
-
-
 def get_all_time_entries():
     url_address = f"{dhis_url}/api/events"
     headers = {'Content-Type': 'application/json'}
@@ -129,18 +127,14 @@ def get_all_time_entries():
     data = json.dumps([{"events": all_time_entries}], sort_keys=True, indent=4)
     writefile(pathReturn()+'/data/events.json', json.loads(data))
 
-# Get all org
-
-
+#Get all org
 def get_org_req():
     get_org_unit_req = requests.get(
         dhis_url+"/api/programs/"+programId+"?fields=organisationUnits",
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_org_unit_req.text
 
-# Get all tei for all org
-
-
+#Get all tei for all org
 def get_tei_org(org_unit_id, startUpdateDate, endUpdateDate):
     all_tei = []
     page = 1
@@ -148,9 +142,7 @@ def get_tei_org(org_unit_id, startUpdateDate, endUpdateDate):
         # Make API call
         get_tei = requests.get(
             dhis_url+"/api/trackedEntityInstances?ou=" +
-            org_unit_id+"&program="+programId+"&fields=trackedEntityInstance,lastUpdated,orgUnit&lastUpdatedStartDate=" +
-            startUpdateDate+"&lastUpdatedEndDate=" +
-            endUpdateDate+"&page=" + str(page),
+            org_unit_id+"&program="+programId+"&fields=trackedEntityInstance,lastUpdated,orgUnit&page=" + str(page),
             auth=HTTPBasicAuth(dhis_user, dhis_password))
         # Check if response is empty
         if not get_tei.json()['trackedEntityInstances']:
@@ -184,19 +176,15 @@ def get_tei_org(org_unit_id, startUpdateDate, endUpdateDate):
     print(json.dumps({"trackedEntityInstances": tei_list}))
     return json.dumps({"trackedEntityInstances": tei_list})
 
-# Get all event for every tei
-
-
+#Get all event for every tei
 def get_event(tei_id):
     get_event = requests.get(
         dhis_url+"/api/events?trackedEntityInstance=" +
-        tei_id + "&fields=event,orgUnit,program",
+        tei_id + "&fields=event,orgUnit,program&pageSize=10000",
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_event.text
 
 # Get all data for every event
-
-
 def get_event_data(event_id):
     get_event_id = requests.get(
         dhis_url+"/api/events/" + event_id, auth=HTTPBasicAuth(dhis_user, dhis_password))

@@ -2,23 +2,19 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
-from .files import writefile, pathReturn, readfile
-from config import dhis_url, dhis_user, dhis_password
+from .files import writefile,pathReturn,readfile
+from config import dhis_url,dhis_user,dhis_password
 import os
 
 categoryOptionsList = []
 listOfOptionsErrors = []
 
 # this function to loop on all args & store data to list
-
-
 def store_category(args):
     for category_data in args:
         categoryOptionsList.append(category_data)
 
 # this fucntion to get all gategory options from dhis2 and store it on category file to use it later
-
-
 def category_options():
     # load existing category options from JSON file
     existing_data = readfile(pathReturn()+'/data/categoryOptions.json')
@@ -33,13 +29,11 @@ def category_options():
     while True:
         for category in category_options_req["categoryOptions"]:
             # check if category option already exists in existing data
-            existing_category = next(
-                (c for c in existing_data if c["code"] == category["code"]), None)
+            existing_category = next((c for c in existing_data if c["code"] == category["code"]), None)
 
-            # add new category option data to existing data
             if existing_category is None:
+                # add new category option data to existing data
                 all_data.append(category)
-
             else:
                 # update existing category option data
                 existing_category.update(category)
@@ -54,8 +48,7 @@ def category_options():
 
         # make request for next page of data
         next_page_url = category_options_req["pager"]["nextPage"]
-        category_options_req = requests.get(
-            next_page_url, auth=HTTPBasicAuth(dhis_user, dhis_password)).json()
+        category_options_req = requests.get(next_page_url, auth=HTTPBasicAuth(dhis_user, dhis_password)).json()
 
     return all_data
 
@@ -63,9 +56,11 @@ def category_options():
 def get_code_data(medicine_name):
     try:
         with open(pathReturn()+'/data/categoryOptions.json') as categoryOptionsFile:
-            catFile = json.load(categoryOptionsFile)
-            MappingList = list(
-                filter(lambda x: x["code"] == medicine_name, catFile))
-            return MappingList[0]['id']
+         catFile = json.load(categoryOptionsFile)
+         MappingList=list(filter(lambda x:x["code"]==medicine_name,catFile))
+         return MappingList[0]['id']
     except:
         listOfOptionsErrors.append(medicine_name)
+
+
+

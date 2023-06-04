@@ -2,6 +2,8 @@
 import json
 from ..data import check, insert_new
 from config import stageForFrequentlyMedications, stageForPrescribedMedications
+import mysql.connector
+
 # This function get all new data and insert or update local database with return new object of grouping data by org and medication
 
 
@@ -14,7 +16,12 @@ def store_data(newest_data, database_connection, cursor):
             first_sql = "SELECT id FROM row_data_prescribed WHERE event_id=%s AND tei = %s AND program = %s AND stage = %s AND orgUnit = %s"
             first_adr = (new_data['event_id'], new_data['tei'],
                          new_data['program'], new_data['stage'], new_data['orgunit'])
-            cursor.execute(first_sql, first_adr)
+            try:
+                cursor.execute(first_sql, first_adr)
+            except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
+
             first_result = cursor.fetchall()
             if(len(first_result) == 0):
                 # if not exist insert new row to database
@@ -24,10 +31,9 @@ def store_data(newest_data, database_connection, cursor):
                 try:
                     cursor.execute(first_insert_sql, first_insert_value)
                     database_connection.commit()
-                except:
-                    print("error first_result")
-                    print(first_insert_sql)
-                    print(first_insert_value)
+                except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
             else:
                 # if exist update the row
                 fist_update_sql = "UPDATE row_data_prescribed SET m1=%s,q1=%s,m2=%s,q2=%s,m3=%s,q3=%s,m4=%s,q4=%s,m5=%s,q5=%s,m6=%s,q6=%s,m7=%s,q7=%s,m8=%s,q8=%s,m9=%s,q9=%s,m10=%s,q10=%s,m11=%s,q11=%s,last_update=%s WHERE event_id=%s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s"
@@ -37,8 +43,9 @@ def store_data(newest_data, database_connection, cursor):
                 try:
                     cursor.execute(fist_update_sql, fist_update_value)
                     database_connection.commit()
-                except:
-                    print("error fist_update_value")
+                except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
             where_query = "WHERE event_id= '" + new_data['event_id']+"' AND tei = '" + new_data['tei']+"' AND program = '" + \
                 new_data['program']+"' AND stage = '" + new_data['stage'] + \
                 "' AND orgunit='" + new_data['orgunit']+"'"
@@ -90,15 +97,23 @@ def store_data(newest_data, database_connection, cursor):
 
             # delete from stock data where record not equal data
             delete_query_first = "DELETE FROM stock_data "+where_query
-            cursor.execute(delete_query_first)
+            try:
+                cursor.execute(delete_query_first)
+            except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
             delete_result_first = cursor.fetchall()
 
         if(new_data['stage'] == stageForFrequentlyMedications):
             second_sql = "SELECT id FROM row_data_frequently WHERE event_id = %s AND tei = %s AND program = %s AND stage = %s AND orgUnit = %s"
             second_adr = (new_data['event_id'], new_data['tei'],
                           new_data['program'], new_data['stage'], new_data['orgunit'])
-            cursor.execute(second_sql, second_adr)
-            second_result = cursor.fetchall()
+            try:
+                cursor.execute(second_sql, second_adr)
+                second_result = cursor.fetchall()
+            except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
             if(len(second_result) == 0):
                 # if not exist insert new row to database
                 second_insert_sql = "INSERT INTO row_data_frequently (event_id,tei,program,stage,orgUnit,date,m1,q1,m2,q2,m3,q3,m4,q4,m5,q5,m6,q6,m7,q7,m8,q8,m9,q9,m10,q10,m11,q11,m12,q12,m13,q13,m14,q14,m15,q15,m16,q16,m17,q17,m18,q18,m19,q19,m20,q20,m21,q21,m22,q22,m23,q23,m24,q24,m25,q25,m26,q26,m27,q27,m28,q28,m29,q29,m30,q30,m31,q31,m32,q32,m33,q33,m34,q34,m35,q35,m36,q36,m37,q37,m38,q38,m39,q39,m40,q40,m41,q41,m42,q42,m43,q43,m44,q44,last_update) VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -113,10 +128,9 @@ def store_data(newest_data, database_connection, cursor):
                 try:
                     cursor.execute(second_insert_sql, second_insert_value)
                     database_connection.commit()
-                except:
-                    print("error second_update_val")
-                    print(second_insert_sql)
-                    print(second_insert_value)
+                except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
             else:
                 # if exist update the row
                 second_update_sql = "UPDATE row_data_frequently SET m1=%s,q1=%s,m2=%s,q2=%s,m3=%s,q3=%s,m4=%s,q4=%s,m5=%s,q5=%s,m6=%s,q6=%s,m7=%s,q7=%s,m8=%s,q8=%s,m9=%s,q9=%s,m10=%s,q10=%s,m11=%s,q11=%s,m12=%s,q12=%s,m13=%s,q13=%s,m14=%s,q14=%s,m15=%s,q15=%s,m16=%s,q16=%s,m17=%s,q17=%s,m18=%s,q18=%s,m19=%s,q19=%s,m20=%s,q20=%s,m21=%s,q21=%s,m22=%s,q22=%s,m23=%s,q23=%s,m24=%s,q24=%s,m25=%s,q25=%s,m26=%s,q26=%s,m27=%s,q27=%s,m28=%s,q28=%s,m29=%s,q29=%s,m30=%s,q30=%s,m31=%s,q31=%s,m32=%s,q32=%s,m33=%s,q33=%s,m34=%s,q34=%s,m35=%s,q35=%s,m36=%s,q36=%s,m37=%s,q37=%s,m38=%s,q38=%s,m39=%s,q39=%s,m40=%s,q40=%s,m41=%s,q41=%s,m42=%s,q42=%s,m43=%s,q43=%s,m44=%s,q44=%s, last_update=%s WHERE event_id= %s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s"
@@ -131,10 +145,9 @@ def store_data(newest_data, database_connection, cursor):
                 try:
                     cursor.execute(second_update_sql, second_update_val)
                     database_connection.commit()
-                except:
-                    print("error second_update_val")
-                    print(second_insert_sql)
-                    print(second_insert_value)
+                except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
             where_query2 = "WHERE event_id= '" + new_data['event_id'] + "' AND tei= '" + new_data['tei']+"' AND program = '" + \
                 new_data['program']+"' AND stage = '" + new_data['stage'] + \
                 "' AND orgunit='" + new_data['orgunit']+"'"
@@ -318,7 +331,11 @@ def store_data(newest_data, database_connection, cursor):
 
             # delete from stock data where record not equal data
             delete_query_second = "DELETE FROM stock_data "+where_query2
-            cursor.execute(delete_query_second)
+            try:
+                cursor.execute(delete_query_second)
+            except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
             delete_result = cursor.fetchall()
 
     # GET all medicine with quantity and check on stock data (database)
@@ -327,7 +344,11 @@ def store_data(newest_data, database_connection, cursor):
         select_stock_query = "SELECT id FROM stock_data WHERE event_id = %s AND tei = %s AND program = %s AND stage = %s AND orgUnit = %s AND dataElement = %s"
         select_stock_value = (all_medication_data['event_id'], all_medication_data['tei'], all_medication_data['program'],
                               all_medication_data['stage'], all_medication_data['orgunit'], all_medication_data['dataElement'])
-        cursor.execute(select_stock_query, select_stock_value)
+        try:    
+            cursor.execute(select_stock_query, select_stock_value)
+        except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
         select_stock_result = cursor.fetchall()
         if(len(select_stock_result) == 0):
             # if not exist then insert new record
@@ -338,18 +359,27 @@ def store_data(newest_data, database_connection, cursor):
             try:
                 cursor.execute(insert_stock_query, insert_stock_value)
                 database_connection.commit()
-            except:
-                print("error insert_stock_value")
+            except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
         else:
             # If exist then update record
             updateSQL = "UPDATE stock_data SET m=%s, q=%s, edit_date=%s WHERE event_id = %s AND tei= %s AND program= %s AND stage= %s AND orgUnit = %s AND dataElement = %s"
             updateVal = (all_medication_data['m'], all_medication_data['q'], all_medication_data['edit_date'], all_medication_data['event_id'], all_medication_data['tei'],
                          all_medication_data['program'], all_medication_data['stage'], all_medication_data['orgunit'], all_medication_data['dataElement'])
-            cursor.execute(updateSQL, updateVal)
+            try:
+                cursor.execute(updateSQL, updateVal)
+            except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
             database_connection.commit()
     # Select and store all stock data by medicine and orgunit
     sum_query = "SELECT orgunit,m,SUM(q) AS q FROM stock_data GROUP BY m,orgunit"
-    cursor.execute(sum_query)
+    try:
+        cursor.execute(sum_query)
+    except mysql.connector.Error as error:
+                    # Handle the exception
+                    print(f"Error occurred: {error}")
     sum_result = cursor.fetchall()
     my_dictionary_data = []
     for row_in_sum in sum_result:

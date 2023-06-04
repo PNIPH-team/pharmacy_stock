@@ -11,10 +11,12 @@ from datetime import datetime
 import time
 from functions.files import pathReturn, createFiles,writefile
 import json
+from config import dhis_password, dhis_url, dhis_user, today_date, programId, programIdStock, dataElementForQuantity, dataElementForTotalQuantity, dataElementForQuantityStock
 # define main function
 
 
 def main():
+    print(today_date)
     start_time = time.time()
     current_time = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
     print("Start Time:", current_time)
@@ -22,8 +24,26 @@ def main():
     connection, cursor = connect_database()
     # check if category options updated or not
     category_options()
-    # #for loop for all org and get list of updated event by date (today date)
+    #for loop for all org and get list of updated event by date (today date)
     event_data = get_org_data()
+    writefile(pathReturn()+'/data/tei_data_all.json', event_data)
+     # Write the merged data back to the JSON file
+    # if len(new_tei_values)>0:
+    #     with open(pathReturn()+'/data/tei_data.json', 'r') as file:
+    #         existing_data = json.load(file)
+
+    #     data = [{
+    #     "lastUpdated": last_updated,
+    #     "orgUnit": org_unit,
+    #     "trackedEntityInstance": tracked_entity
+    #     } for last_updated, org_unit, tracked_entity in new_tei_values]
+    #     existing_data=existing_data[0]['tei']
+    #     existing_data += data
+    #     tei_store_data=json.dumps([{"tei":existing_data}], sort_keys=True, indent=4)
+    #     writefile(pathReturn()+'/data/tei_data.json', json.loads(tei_store_data))
+   
+    # with open(pathReturn()+'/data/tei_data_all.json', 'r') as file_tei:
+    #     event_data = json.load(file_tei)
     # check event list if empty or not
     if not len(event_data) == 0:
         # get all event as list from all dhis2 organizations
