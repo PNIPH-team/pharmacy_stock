@@ -11,7 +11,7 @@ post_log = []
 put_log = []
 new_tei_values = []
 
-
+#
 def store_logs(date, array):
     createFiles(pathReturn()+'/data/'+date)
     writefile(pathReturn()+'/data/'+date+'/post_log.json', post_log)
@@ -20,8 +20,9 @@ def store_logs(date, array):
     post_log.clear()
     put_log.clear()
 
-
+#
 def create_event(org_unit_id, quantity_before_exchange, medicine_id):
+    # Change From Completed to Active if you want to make stock with init balance
     data = {
         "status": "COMPLETED",
         "program": programIdStock,
@@ -49,7 +50,7 @@ def create_event(org_unit_id, quantity_before_exchange, medicine_id):
         post_log.append({"data": att_req_data})
     return att_req_data
 
-
+#
 def new_update_event(medication_id, total_quantity, quantity_stock, stock_quantity_dispensed, event_id, organisation_id, program_id, status, expire_date):
     headers = {'Content-Type': 'application/json'}
     add_date = None
@@ -142,7 +143,9 @@ def get_tei_org(org_unit_id, startUpdateDate, endUpdateDate):
         # Make API call
         get_tei = requests.get(
             dhis_url+"/api/trackedEntityInstances?ou=" +
-            org_unit_id+"&program="+programId+"&fields=trackedEntityInstance,lastUpdated,orgUnit&page=" + str(page),
+            org_unit_id+"&program="+programId+"&fields=trackedEntityInstance,lastUpdated,orgUnit&lastUpdatedStartDate=" +
+            startUpdateDate+"&lastUpdatedEndDate=" +
+            endUpdateDate+"&page=" + str(page),
             auth=HTTPBasicAuth(dhis_user, dhis_password))
         # Check if response is empty
         if not get_tei.json()['trackedEntityInstances']:
@@ -189,3 +192,14 @@ def get_event_data(event_id):
     get_event_id = requests.get(
         dhis_url+"/api/events/" + event_id, auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_event_id.text
+
+# Get all data for every event
+def postAnalytic():
+    postAnalyticRequest = requests.post(
+        dhis_url+"/api/39/resourceTables/analytics", auth=HTTPBasicAuth(dhis_user, dhis_password))
+    # Check the response status code
+    if postAnalyticRequest.status_code == 200:
+        return "Run Analytics successful!"
+    else:
+        return ("Request failed with status code:", postAnalyticRequest.status_code)
+    # return postAnalyticRequest.text

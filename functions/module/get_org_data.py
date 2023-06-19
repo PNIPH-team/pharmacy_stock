@@ -9,8 +9,9 @@ from config import *
 # This function make multi loop to get all event data from all organisation for every tei and return array of event objects
 
 
-def get_org_data():
+def get_org_data(max_Number_Of_Loop):
     all_array = []
+    array_number_loop=0
     # Get all org
     get_org_unit_data = json.loads(get_org_req())
     # loop on all org ids
@@ -22,6 +23,7 @@ def get_org_data():
 
         # check if has data
         if('trackedEntityInstances' in get_tei_data):
+            array_number_loop+=1
             # loop on all tei data
             for number_of_tei in range(len(get_tei_data['trackedEntityInstances'])):
                 # store org_tei data to array
@@ -594,5 +596,7 @@ def get_org_data():
 
                             # Add frequently array to all_array variable
                             all_array.append(new_data_array_Frequently)
+        # if(array_number_loop>max_Number_Of_Loop):
+        #     break
     # return all event objects
     return all_array

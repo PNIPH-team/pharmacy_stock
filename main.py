@@ -6,7 +6,7 @@ from functions.category_options import category_options, listOfOptionsErrors
 from functions.module.get_org_data import get_org_data
 from functions.module.store_data import store_data
 from functions.module.update import updateData
-from functions.api import get_all_time_entries, store_logs,new_tei_values
+from functions.api import get_all_time_entries, store_logs,new_tei_values,postAnalytic
 from datetime import datetime
 import time
 from functions.files import pathReturn, createFiles,writefile
@@ -15,7 +15,7 @@ from config import dhis_password, dhis_url, dhis_user, today_date, programId, pr
 # define main function
 
 
-def main():
+def main(max_Number_Of_Loop):
     print(today_date)
     start_time = time.time()
     current_time = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
@@ -25,22 +25,22 @@ def main():
     # check if category options updated or not
     category_options()
     #for loop for all org and get list of updated event by date (today date)
-    event_data = get_org_data()
+    event_data = get_org_data(max_Number_Of_Loop)
     writefile(pathReturn()+'/data/tei_data_all.json', event_data)
      # Write the merged data back to the JSON file
-    # if len(new_tei_values)>0:
-    #     with open(pathReturn()+'/data/tei_data.json', 'r') as file:
-    #         existing_data = json.load(file)
+    if len(new_tei_values)>0:
+        with open(pathReturn()+'/data/tei_data.json', 'r') as file:
+            existing_data = json.load(file)
 
-    #     data = [{
-    #     "lastUpdated": last_updated,
-    #     "orgUnit": org_unit,
-    #     "trackedEntityInstance": tracked_entity
-    #     } for last_updated, org_unit, tracked_entity in new_tei_values]
-    #     existing_data=existing_data[0]['tei']
-    #     existing_data += data
-    #     tei_store_data=json.dumps([{"tei":existing_data}], sort_keys=True, indent=4)
-    #     writefile(pathReturn()+'/data/tei_data.json', json.loads(tei_store_data))
+        data = [{
+        "lastUpdated": last_updated,
+        "orgUnit": org_unit,
+        "trackedEntityInstance": tracked_entity
+        } for last_updated, org_unit, tracked_entity in new_tei_values]
+        existing_data=existing_data[0]['tei']
+        existing_data += data
+        tei_store_data=json.dumps([{"tei":existing_data}], sort_keys=True, indent=4)
+        writefile(pathReturn()+'/data/tei_data.json', json.loads(tei_store_data))
    
     # with open(pathReturn()+'/data/tei_data_all.json', 'r') as file_tei:
     #     event_data = json.load(file_tei)
@@ -73,9 +73,16 @@ def main():
         tei_store_data=json.dumps([{"tei":existing_data}], sort_keys=True, indent=4)
         writefile(pathReturn()+'/data/tei_data.json', json.loads(tei_store_data))
     print("End Time:", time.time())
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print("--- %s Minutes ---" % (time.time() - start_time))
+    print(postAnalytic())    
 
 
 # run main function
 if __name__ == "__main__":
-    main()
+    max_Number_Of_Loop=0
+    # while(max_Number_Of_Loop<800):
+        # max_Number_Of_Loop+=300
+        # print(max_Number_Of_Loop)
+    main(max_Number_Of_Loop)
+    
+    

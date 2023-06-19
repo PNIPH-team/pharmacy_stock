@@ -294,9 +294,9 @@ Pharmacy_QTY_Despensed_10 = "wFeFcxSnOO0"
 
 # global variable Configuration
 today = date.today()
-# today_date = today.strftime("%Y-%m-%d")
-yesterday = today - timedelta(days=1)
-today_date = yesterday.strftime("%Y-%m-%d")
+today_date = today.strftime("%Y-%m-%d")
+# yesterday = today - timedelta(days=1)
+# today_date = yesterday.strftime("%Y-%m-%d")
 
 # Time Settings
 todayDateTime = datetime.now().today()
