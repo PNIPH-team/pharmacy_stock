@@ -2,15 +2,26 @@
 import os
 import json
 
-# create files with path parameters
-def createFiles(path):
+def create_file(path):
+    """
+    Creates a file at the specified path.
+
+    Args:
+    - path: The path where the file will be created.
+    """
     try:
         os.mkdir(path)
     except OSError as error:
         print(error)
 
-# write data on file with file path and data parameters
-def writefile(file_name, data):
+def write_file(file_name, data):
+    """
+    Writes data to a file.
+
+    Args:
+    - file_name: The name of the file.
+    - data: The data to be written to the file.
+    """
     json_data = json.dumps(data, ensure_ascii=False)
     if (os.path.exists(file_name)):
         os.remove(file_name)
@@ -19,10 +30,23 @@ def writefile(file_name, data):
         files.write(json_data)
     file.close()
 
-def pathReturn():
+def return_path():
+    """
+    Returns the path where files are stored.
+    """
     return "/Users/salehabbas/Documents/GitHub/pharmacy_stock"
 
-def readfile(file_name):
+def read_file(file_name):
+    """
+    Reads data from a file.
+
+    Args:
+    - file_name: The name of the file to read.
+
+    Returns:
+    - The data read from the file.
+    - An empty list if the file does not exist.
+    """
     if os.path.exists(file_name):
         with open(file_name, "r") as file:
             data = json.load(file)

@@ -2,23 +2,32 @@
 import json
 from functions.module.split_events import split_events
 from functions.module.update_scenario import update_scenario
-from functions.files import pathReturn
+from functions.files import return_path
 from config import dataElementForQuantity
 # This function work to check every new event with existing event on capture program
 def updateData(all_event_data_groupby_json):
+    """
+    Updates data based on the provided event data.
+
+    Args:
+        all_event_data_groupby_json (str): JSON string containing the event data.
+
+    Returns:
+        None
+    """
     #Load last updated list from database
     group_by_database_array=json.loads(all_event_data_groupby_json)
     for group_by_database_list in range(len(group_by_database_array)):
 
         #define variables from database data
-        org_unit_id=group_by_database_array[group_by_database_list]['orgunit']
-        medicine_id=group_by_database_array[group_by_database_list]['m']
-        dispensed_quantity=group_by_database_array[group_by_database_list]['q']
+        org_unit_id=group_by_database_array[group_by_database_list]['orgunit_id']
+        medicine_id=group_by_database_array[group_by_database_list]['medication_code']
+        dispensed_quantity=group_by_database_array[group_by_database_list]['medication_total_quantity']
         complete_dispense_value=0
         active_dispense_value=0
 
         # read events data from json file
-        with open(pathReturn()+'/data/events.json') as event:
+        with open(return_path()+'/data/events.json') as event:
             # GET List of event for the same id
             #? START STEP1 get and store all event data
             # get all tracker event from events file

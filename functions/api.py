@@ -3,28 +3,47 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 from config import dhis_password, dhis_url, dhis_user, today_date, programId, programIdStock, dataElementForQuantity, dataElementForTotalQuantity, dataElementForQuantityStock
-from .files import writefile, pathReturn, createFiles, readfile
-import os
+from .files import write_file, return_path, create_file
 
 # Create event on dhis2
 post_log = []
 put_log = []
 new_tei_values = []
 
-#
+
 def store_logs(date, array):
-    createFiles(pathReturn()+'/data/'+date)
-    writefile(pathReturn()+'/data/'+date+'/post_log.json', post_log)
-    writefile(pathReturn()+'/data/'+date+'/put_log.json', put_log)
-    writefile(pathReturn()+'/data/'+date+'/data_log.json', array)
+    """
+    Stores logs in files for a specific date.
+
+    Parameters:
+    - date (str): The date for which the logs are being stored.
+    - array (list): The log data to be stored.
+
+    Returns:
+    None
+    """
+    create_file(return_path()+'/data/'+date)
+    write_file(return_path()+'/data/'+date+'/post_log.json', post_log)
+    write_file(return_path()+'/data/'+date+'/put_log.json', put_log)
+    write_file(return_path()+'/data/'+date+'/data_log.json', array)
     post_log.clear()
     put_log.clear()
 
-#
+
 def create_event(org_unit_id, quantity_before_exchange, medicine_id):
-    # Change From Completed to Active if you want to make stock with init balance
+    """
+    Creates an event in DHIS2 for a given organization unit, quantity, and medicine ID.
+
+    Parameters:
+    - org_unit_id (str): The ID of the organization unit.
+    - quantity_before_exchange (int): The quantity before exchange.
+    - medicine_id (str): The ID of the medicine.
+
+    Returns:
+    dict: The response data from the DHIS2 API for the created event.
+    """
     data = {
-        "status": "COMPLETED",
+        "status": "ACTIVE",
         "program": programIdStock,
         "enrollment": "lzL2rq6vcqw",
         "enrollmentStatus": "ACTIVE",
@@ -50,8 +69,26 @@ def create_event(org_unit_id, quantity_before_exchange, medicine_id):
         post_log.append({"data": att_req_data})
     return att_req_data
 
-#
+
 def new_update_event(medication_id, total_quantity, quantity_stock, stock_quantity_dispensed, event_id, organisation_id, program_id, status, expire_date):
+    """
+    Updates an existing event in DHIS2 with new data.
+
+    Parameters:
+    - medication_id (str): The ID of the medication.
+    - total_quantity (int): The total quantity of the medication.
+    - quantity_stock (int): The quantity in stock.
+    - stock_quantity_dispensed (int): The quantity of stock dispensed.
+    - event_id (str): The ID of the event to be updated.
+    - organisation_id (str): The ID of the organization unit.
+    - program_id (str): The ID of the program.
+    - status (str): The status of the event.
+    - expire_date (datetime): The expiration date of the medication (optional).
+
+    Returns:
+    - bool: True if the event update was successful, False otherwise.
+    """
+
     headers = {'Content-Type': 'application/json'}
     add_date = None
     if(expire_date != None):
@@ -93,8 +130,14 @@ def new_update_event(medication_id, total_quantity, quantity_stock, stock_quanti
     except:
         return False
 
-# Get all dhis2 event & store it on json
+
 def get_all_time_entries():
+    """
+    Retrieves all events from DHIS2 and stores them in a JSON file.
+
+    Returns:
+    - None
+    """
     url_address = f"{dhis_url}/api/events"
     headers = {'Content-Type': 'application/json'}
 
@@ -126,17 +169,36 @@ def get_all_time_entries():
         page += 1
     # write all data to JSON file
     data = json.dumps([{"events": all_time_entries}], sort_keys=True, indent=4)
-    writefile(pathReturn()+'/data/events.json', json.loads(data))
+    write_file(return_path()+'/data/events.json', json.loads(data))
 
-#Get all org
+
 def get_org_req():
+    """
+    Retrieves the organization units associated with a specific program from DHIS2.
+
+    Returns:
+    - The response text of the HTTP request.
+    """
     get_org_unit_req = requests.get(
         dhis_url+"/api/programs/"+programId+"?fields=organisationUnits",
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_org_unit_req.text
 
-#Get all tei for all org
+
 def get_tei_org(org_unit_id, startUpdateDate, endUpdateDate):
+    """
+    Retrieves tracked entity instances (TEIs) from DHIS2 based on the specified organization unit,
+    start update date, and end update date. Compares the retrieved TEIs with the stored TEI data
+    to identify any missing values. Returns the list of missing TEIs.
+
+    Parameters:
+    - org_unit_id: The ID of the organization unit to retrieve TEIs for.
+    - startUpdateDate: The start date for filtering TEIs based on their last updated date.
+    - endUpdateDate: The end date for filtering TEIs based on their last updated date.
+
+    Returns:
+    - A JSON string containing the list of missing TEIs.
+    """
     all_tei = []
     page = 1
     while True:
@@ -158,7 +220,7 @@ def get_tei_org(org_unit_id, startUpdateDate, endUpdateDate):
         page += 1
 
     # loop on list tei_list with Monthly Array
-    with open(pathReturn()+'/data/tei_data.json', 'r') as tei_file:
+    with open(return_path()+'/data/tei_data.json', 'r') as tei_file:
         tei_stored_data = json.load(tei_file)
 
     # Extract values to check
@@ -179,27 +241,51 @@ def get_tei_org(org_unit_id, startUpdateDate, endUpdateDate):
     print(json.dumps({"trackedEntityInstances": tei_list}))
     return json.dumps({"trackedEntityInstances": tei_list})
 
-#Get all event for every tei
+
 def get_event(tei_id):
+    """
+    Retrieves events associated with a specific tracked entity instance (TEI) from DHIS2.
+
+    Parameters:
+    - tei_id: The ID of the tracked entity instance to retrieve events for.
+
+    Returns:
+    - The response text containing the retrieved events.
+    """
     get_event = requests.get(
         dhis_url+"/api/events?trackedEntityInstance=" +
         tei_id + "&fields=event,orgUnit,program&pageSize=10000",
         auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_event.text
 
-# Get all data for every event
+
 def get_event_data(event_id):
+    """
+    Retrieves the data of a specific event from DHIS2 based on the event ID.
+
+    Parameters:
+    - event_id: The ID of the event to retrieve the data for.
+
+    Returns:
+    - The response text containing the event data.
+    """
     get_event_id = requests.get(
         dhis_url+"/api/events/" + event_id, auth=HTTPBasicAuth(dhis_user, dhis_password))
     return get_event_id.text
 
-# Get all data for every event
-def postAnalytic():
-    postAnalyticRequest = requests.post(
+
+def post_analytic():
+    """
+    Runs analytics on DHIS2 to generate resource tables for all data.
+
+    Returns:
+    - A success message if the analytics request was successful.
+    - A tuple containing an error message and the status code if the request failed.
+    """
+    post_analytic_request = requests.post(
         dhis_url+"/api/39/resourceTables/analytics", auth=HTTPBasicAuth(dhis_user, dhis_password))
     # Check the response status code
-    if postAnalyticRequest.status_code == 200:
+    if post_analytic_request.status_code == 200:
         return "Run Analytics successful!"
     else:
-        return ("Request failed with status code:", postAnalyticRequest.status_code)
-    # return postAnalyticRequest.text
+        return ("Request failed with status code:", post_analytic_request.status_code)

@@ -2,22 +2,34 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
-from .files import writefile,pathReturn,readfile
-from config import dhis_url,dhis_user,dhis_password
-import os
+from .files import write_file, return_path, read_file
+from config import dhis_url, dhis_user, dhis_password
 
 categoryOptionsList = []
 listOfOptionsErrors = []
 
-# this function to loop on all args & store data to list
+
 def store_category(args):
+    """
+    Stores category data from the arguments into a list.
+
+    Args:
+    - args: A list of category data to be stored.
+    """
     for category_data in args:
         categoryOptionsList.append(category_data)
 
-# this fucntion to get all gategory options from dhis2 and store it on category file to use it later
+
 def category_options():
+    """
+    Retrieves all category options from DHIS2 and stores them in a JSON file.
+    Existing category options are merged with new data.
+
+    Returns:
+    - all_data: List of all category options data.
+    """
     # load existing category options from JSON file
-    existing_data = readfile(pathReturn()+'/data/categoryOptions.json')
+    existing_data = read_file(return_path()+'/data/categoryOptions.json')
 
     # request to get first page of category options data
     category_options_req = requests.get(
@@ -29,7 +41,8 @@ def category_options():
     while True:
         for category in category_options_req["categoryOptions"]:
             # check if category option already exists in existing data
-            existing_category = next((c for c in existing_data if c["code"] == category["code"]), None)
+            existing_category = next(
+                (c for c in existing_data if c["code"] == category["code"]), None)
 
             if existing_category is None:
                 # add new category option data to existing data
@@ -40,7 +53,7 @@ def category_options():
                 all_data.append(existing_category)
 
         # write data to JSON file
-        writefile(pathReturn()+'/data/categoryOptions.json', all_data)
+        write_file(return_path()+'/data/categoryOptions.json', all_data)
 
         # check if there are more pages of data
         if category_options_req["pager"]["page"] == category_options_req["pager"]["pageCount"]:
@@ -48,19 +61,27 @@ def category_options():
 
         # make request for next page of data
         next_page_url = category_options_req["pager"]["nextPage"]
-        category_options_req = requests.get(next_page_url, auth=HTTPBasicAuth(dhis_user, dhis_password)).json()
+        category_options_req = requests.get(
+            next_page_url, auth=HTTPBasicAuth(dhis_user, dhis_password)).json()
 
     return all_data
 
 
 def get_code_data(medicine_name):
+    """
+    Retrieves the category option ID associated with a specific medicine name from the category options data.
+
+    Args:
+    - medicine_name: Name of the medicine.
+
+    Returns:
+    - category_option_id: ID of the category option associated with the medicine name.
+    """
     try:
-        with open(pathReturn()+'/data/categoryOptions.json') as categoryOptionsFile:
-         catFile = json.load(categoryOptionsFile)
-         MappingList=list(filter(lambda x:x["code"]==medicine_name,catFile))
-         return MappingList[0]['id']
+        with open(return_path()+'/data/categoryOptions.json') as categoryOptionsFile:
+            catFile = json.load(categoryOptionsFile)
+            MappingList = list(
+                filter(lambda x: x["code"] == medicine_name, catFile))
+            return MappingList[0]['id']
     except:
         listOfOptionsErrors.append(medicine_name)
-
-
-

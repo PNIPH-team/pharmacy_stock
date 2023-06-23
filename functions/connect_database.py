@@ -3,8 +3,14 @@ import mysql.connector
 from mysql.connector import Error
 from config import host,database,user,port,password
 
-# connection database function return connection and cursor parameter to check connection with database and make query using cursor
 def connect_database():
+    """
+    Establishes a connection to the MySQL database and returns the connection and cursor objects.
+
+    Returns:
+    - connection: Connection object for interacting with the database.
+    - cursor: Cursor object for executing SQL queries.
+    """
     try:
         connection = mysql.connector.connect(host=host,
                                              database=database,

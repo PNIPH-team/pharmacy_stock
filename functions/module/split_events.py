@@ -2,6 +2,20 @@ from datetime import datetime
 from config import today,dataElementForQuantity,dataElementForTotalQuantity,dataElementForQuantityStock
 
 def split_events(quantity_before_exchange,filter_events_by_medication_organization):
+    """
+    Splits events into different arrays based on certain conditions.
+    
+    Args:
+        quantity_before_exchange (int): Quantity before exchange.
+        filter_events_by_medication_organization (list): List of events to filter.
+        
+    Returns:
+        tuple: A tuple containing three arrays:
+            - array_for_active_events: Array of active events that meet the conditions.
+            - array_for_not_active_events: Array of inactive events that meet the conditions.
+            - array_for_negative_values: Array of all events (both active and inactive) that meet the conditions.
+    """
+    
     #define Arrays
     array_for_active_events=[]
     array_for_not_active_events=[]

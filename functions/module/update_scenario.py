@@ -1,6 +1,19 @@
 from ..api import create_event, new_update_event
 
 def update_scenario(quantity_before_exchange,array_for_active_events,array_for_negative_values,org_unit_id,medicine_id):
+    """
+    Updates the scenario based on the quantity before exchange and the arrays of active and negative events.
+    
+    Args:
+        quantity_before_exchange (int): Quantity before exchange.
+        array_for_active_events (list): Array of active events that meet the conditions.
+        array_for_negative_values (list): Array of all events (both active and inactive) that meet the conditions.
+        org_unit_id (str): Organization unit ID.
+        medicine_id (str): Medicine ID.
+        
+    Returns:
+        None
+    """
     sorted_date_array = sorted(array_for_active_events, key=lambda x: x['date'])
     sorted_date_array_negative = sorted(array_for_negative_values, key=lambda x: x['date'],reverse=True)
     while quantity_before_exchange!=0:
